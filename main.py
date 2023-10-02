@@ -25,11 +25,11 @@ def main():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and x > width:
             x -= vel
-        if keys[pygame.K_RIGHT] and x < 500 - width:
+        if keys[pygame.K_RIGHT] and x < 1200 - width:
             x += vel
         if keys[pygame.K_UP] and y > width:
             y -= vel
-        if keys[pygame.K_DOWN] and y < 500 - width:
+        if keys[pygame.K_DOWN] and y < 700 - width:
             y += vel
 
         win.fill((0, 0, 0))
