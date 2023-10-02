@@ -3,7 +3,7 @@ import pygame
 def main():
     pygame.init()
 
-    win = pygame.display.set_mode((1250, 700))
+    win = pygame.display.set_mode((1200, 700))
 
     pygame.display.set_caption("RSXIV")
     run = True
