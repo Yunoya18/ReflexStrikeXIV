@@ -18,6 +18,7 @@ color = color_passive
 active = False
 r = RandomWords()
 word = None
+correct = False 
 
 while True:
     for event in pygame.event.get():
@@ -27,19 +28,22 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 active = True
-                if word == None:
+        if active:
+            if word == None:
                     word = r.get_random_word()
                     print(word)
-        if active:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     user_text = user_text[:-1]
                 elif event.key != pygame.K_SPACE:
                     user_text += event.unicode
             if user_text == word:
+                correct = True
                 user_text = ''
-                word = r.get_random_word()
-                print(word)
+                active = False
+                word = None
+            else:
+                correct = False
 
     screen.fill((255, 255, 255))
     if active:
