@@ -3,7 +3,7 @@ import pygame, sys
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('HP/pngegg.png').convert_alpha()
+        self.image = pygame.image.load('asset/HP/pngegg.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.image = pygame.transform.scale(self.image,(100,200))
         self.rect.center=(875,1000)
@@ -42,8 +42,8 @@ SCREEN_HEIGHT = 700
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 link = pygame.sprite.GroupSingle(Player())
-full_heart = pygame.image.load('HP/full_heart.png').convert_alpha()
-empty_heart = pygame.image.load('HP/empty_heart.png').convert_alpha()
+full_heart = pygame.image.load('asset/HP/full_heart.png').convert_alpha()
+empty_heart = pygame.image.load('asset/HP/empty_heart.png').convert_alpha()
 
 
 #color setting
@@ -58,7 +58,7 @@ FPS = 120
 clock = pygame.time.Clock()
 
 #Text
-costom = pygame.font.Font('HP/Coiny.ttf',50)
+costom = pygame.font.Font('asset/HP/Coiny.ttf',50)
 power = costom.render("Power",True,BLUE2)
 
 power1 = power.get_rect()
@@ -66,7 +66,7 @@ power1.centerx = 200
 power1.centery = 350
 
 #Me
-costom = pygame.font.Font('HP/Coiny.ttf',50)
+costom = pygame.font.Font('asset/HP/Coiny.ttf',50)
 me = costom.render('Me',True,WHITE)
 
 me1 = me.get_rect()
