@@ -1,10 +1,13 @@
-import pygame
+import pygame, sys
+from level101 import *
+from level import Level
 
 def main():
     pygame.init()
 
     win = pygame.display.set_mode((1200, 700))
-
+    clock = pygame.time.Clock()
+    level = Level(level_map,win)
     pygame.display.set_caption("RSXIV")
     run = True
 
@@ -32,11 +35,12 @@ def main():
         if keys[pygame.K_DOWN] and y < 500 - width:
             y += vel
 
-        win.fill((0, 0, 0))
+        win.fill(('black'))
+        level.run()
         pygame.draw.circle(win, (255, 0, 0), [x, y], width, 0)
 
         pygame.display.update()
-
+        clock.tick(60)
     pygame.quit()
 
 main()
