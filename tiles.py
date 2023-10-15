@@ -6,3 +6,5 @@ class Tile(pygame.sprite.Sprite):
         self.image = pygame.Surface((size,size))
         self.image.fill('Grey')
         self.rect = self.image.get_rect(topleft = pos)
+    def update(self,x_shift):
+        self.rect.x += x_shift

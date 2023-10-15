@@ -44,20 +44,8 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and x > width:
-            x -= vel
-        if keys[pygame.K_RIGHT] and x < 500 - width:
-            x += vel
-        if keys[pygame.K_UP] and y > width:
-            y -= vel
-        if keys[pygame.K_DOWN] and y < 500 - width:
-            y += vel
-
         win.fill(('black'))
         level.run()
-        pygame.draw.circle(win, (255, 0, 0), [x, y], width, 0)
-
         pygame.display.update()
         magic_missle.update(x)
         clock.tick(60)

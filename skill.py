@@ -50,7 +50,7 @@ while True:
         color = color_active
     else:
         color = color_passive
-    
+
     pygame.draw.rect(screen, color, input_box)
     text_surface = base_font.render(user_text, True, (255, 255, 255))
     word_surface = base_font.render(word, True, (255, 255, 255))
