@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_UP]:
             self.jump()
 
     def apply_gravity(self):
