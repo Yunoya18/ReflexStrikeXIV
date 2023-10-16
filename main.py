@@ -73,13 +73,9 @@ def main():
             y -= vel
         if keys[pygame.K_DOWN] and y < 500 - width:
             y += vel
-        if keys[pygame.K_SPACE]:
-            toggle_skill(x, y, win)
 
         win.fill(('black'))
         level.run()
-        pygame.draw.circle(win, (255, 0, 0), [x, y], width, 0)
-
         pygame.display.update()
         magic_missle.update(x)
         clock.tick(60)

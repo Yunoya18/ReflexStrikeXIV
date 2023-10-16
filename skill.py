@@ -35,7 +35,7 @@ def skill():
         color = color_active
     else:
         color = color_passive
-    
+
     pygame.draw.rect(screen, color, input_box)
     text_surface = base_font.render(user_text, True, (255, 255, 255))
     screen.blit(text_surface, (input_box.x+5, input_box.y+5))
