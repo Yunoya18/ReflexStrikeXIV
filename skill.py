@@ -1,10 +1,6 @@
 import pygame
 import sys
-from random_word import RandomWords
 
-pygame.init()
-
-clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1200, 700))
 
 base_font = pygame.font.Font(None, 32)
@@ -16,22 +12,11 @@ color_passive = pygame.Color("chartreuse4")
 color = color_passive
 
 active = False
-r = RandomWords()
 word = None
 correct = False 
 
-while True:
+def skill():
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                active = True
-        if active:
-            if word == None:
-                    word = r.get_random_word()
-                    print(word)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     user_text = user_text[:-1]
@@ -53,11 +38,10 @@ while True:
     
     pygame.draw.rect(screen, color, input_box)
     text_surface = base_font.render(user_text, True, (255, 255, 255))
-    word_surface = base_font.render(word, True, (255, 255, 255))
-
     screen.blit(text_surface, (input_box.x+5, input_box.y+5))
 
     input_box.w = text_surface.get_width()+10
     pygame.display.flip()
 
-    clock.tick(60)
+class skill1:
+    """test"""
