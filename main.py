@@ -8,15 +8,58 @@ from level import Level
 
 #normal projectile ---not skill---
 class magic_missle(pygame.sprite.Sprite):
-    def __init__(self, player_pos_x, player_pos_y, speed) :
+    def __init__(self, player_pos_x, player_pos_y, speed):
         super().__init__()
-        self.image = pygame.surface((20,10))
+        self.image = pygame.Surface((100,100))
         self.image.fill((0,0,255))
         self.rect = self.image.get_rect(center = (player_pos_x,player_pos_y))
         self.speed = speed
 
-def create_magic_missle(x, y):
-    return magic_missle(x +1, y)
+    def update(self):
+        self.rect.x += self.speed
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self,pos):
+        super().__init__()
+        self.image = pygame.Surface((32,64))
+        self.image.fill('red')
+        self.rect = self.image.get_rect(center = pos)
+
+        # player movement
+        self.direction = pygame.math.Vector2(0,0)
+        self.speed = 8
+        self.gravity = 0.8
+        self.jump_speed = -16
+
+    def get_input(self):
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_RIGHT]:
+            self.direction.x = 1
+        elif keys[pygame.K_LEFT]:
+            self.direction.x = -1
+        else:
+            self.direction.x = 0
+
+        if keys[pygame.K_UP]:
+            self.jump()
+
+    def create_magic_missle(self):
+        return magic_missle(self.rect.centerx +1, self.rect.centery, 15)
+    
+    def apply_gravity(self):
+        self.direction.y += self.gravity
+        self.rect.y += self.direction.y
+
+    def jump(self):
+        self.direction.y = self.jump_speed
+
+    def update(self):
+        self.get_input()
+        self.rect
+    
+    def create_magic_missle(self):
+        return magic_missle(self.rect.x +1, self.rect.y, 15)
 
 def main():
     pygame.init()
@@ -36,12 +79,10 @@ def main():
     # current cord
     x = 250
     y = 250
-    vel = 5
 
-    magic_missiles = pygame.sprite.Group()
+    player = Player((x, y))
+    magic_group = pygame.sprite.Group()
 
-    #SPEED
-    speed = 10
     while run:
         pygame.time.delay(10)
         for i in range(0, tiles):
@@ -52,11 +93,20 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_z]:
+            magic_group.add(player.create_magic_missle())
 
         level.run()
+        
+        #update
+        player.update()
+        magic_group.update()
+
+        #draw
+        magic_group.draw(win)
+
         pygame.display.update()
-        magic_missle.update(x)
         clock.tick(60)
     pygame.quit()
 
