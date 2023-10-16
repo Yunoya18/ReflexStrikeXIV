@@ -13,18 +13,18 @@ class Player(pygame.sprite.Sprite):
     def get_damage(self):
         if self.health > 0:
             self.health -= 1
-    
+
     def get_health(self):
         if self.health < self.max_health:
             self.health += 1
-    
+
     def full_hearts(self):
         for heart in range(self.health):
             if heart < self.health:
                 screen.blit(full_heart,(heart * 50 + 10,5))
             else:
                 screen.blit(empty_heart,(heart * 50 + 10,5))
-    
+
     def empty_hearts(self):
         for heart in range(self.max_health):
             if heart < self.health:

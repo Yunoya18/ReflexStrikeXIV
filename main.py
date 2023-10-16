@@ -1,5 +1,6 @@
 from typing import Any
 import pygame, sys
+import math
 
 #from pygame.sprite import _Group
 from level101 import *
@@ -25,7 +26,10 @@ def main():
     level = Level(level_map,win)
     pygame.display.set_caption("RSXIV")
     run = True
-
+    bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
+    bg_width = bg.get_width()
+    tiles = math.ceil(1200 / bg_width) + 1
+    scroll = 0
     # object
     width = 20
 
@@ -40,11 +44,16 @@ def main():
     speed = 10
     while run:
         pygame.time.delay(10)
+        for i in range(0, tiles):
+            win.blit(bg, (i * bg_width + scroll, 0))
+        scroll -= 5
+        if abs(scroll) > bg_width:
+            scroll = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-        win.fill(('black'))
+
         level.run()
         pygame.display.update()
         magic_missle.update(x)
