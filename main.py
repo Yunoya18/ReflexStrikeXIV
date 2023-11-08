@@ -61,32 +61,50 @@ class Player(pygame.sprite.Sprite):
     def create_magic_missle(self):
         return magic_missle(self.rect.x +1, self.rect.y, 15)
 
+class toggle_skill(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.font = pygame.font.Font(None, 32)
+        self.color = pygame.Color("lightskyblue3")
+        self.box = pygame.Rect(500, 50, 200, 50)
+
+    def check_text(self, text, keys):
+        if keys[pygame.K_BACKSPACE]:
+            text = text[:-1]
+        else:
+            text += keys.unicode
+        return text
+    
+    def check_skill(self):
+        pass
+
 def main():
     pygame.init()
 
-    win = pygame.display.set_mode((1200, 700))
+    screen = pygame.display.set_mode((1200, 700))
     clock = pygame.time.Clock()
-    level = Level(level_map,win)
-    pygame.display.set_caption("RSXIV")
+    level = Level(level_map,screen)
+    pygame.display.set_caption("SpellStrikeXIV")
     run = True
     bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
     bg_width = bg.get_width()
     tiles = math.ceil(1200 / bg_width) + 1
     scroll = 0
     # object
-    width = 20
 
     # current cord
     x = 250
     y = 250
 
+    # to start
     player = Player((x, y))
     magic_group = pygame.sprite.Group()
+    active_skill = toggle_skill()
 
     while run:
         pygame.time.delay(10)
         for i in range(0, tiles):
-            win.blit(bg, (i * bg_width + scroll, 0))
+            screen.blit(bg, (i * bg_width + scroll, 0))
         scroll -= 5
         if abs(scroll) > bg_width:
             scroll = 0
@@ -104,7 +122,8 @@ def main():
         magic_group.update()
 
         #draw
-        magic_group.draw(win)
+        magic_group.draw(screen)
+        pygame.draw.rect(screen, active_skill.color, active_skill.box)
 
         pygame.display.update()
         clock.tick(60)
