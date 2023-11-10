@@ -1,11 +1,12 @@
 import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos):
-        super().__init__()
-        self.image = pygame.Surface((32,64))
-        self.image.fill('red')
-        self.rect = self.image.get_rect(topleft = pos)
+    def __init__(self, x, y, scale):
+        pygame.sprite.Sprite.__init__(self)
+        img = pygame.image.load('MCMAIN/MCCAST1.1.jpg')
+        self.image = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
         # player movement
         self.direction = pygame.math.Vector2(0,0)
