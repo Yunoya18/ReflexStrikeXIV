@@ -18,17 +18,29 @@ def draw_bg():
     screen.fill(BG)
 
 
-#normal projectile ---not skill---
+#projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
-    def __init__(self, player_pos_x, player_pos_y, speed):
+    def __init__(self, player_pos_x, player_pos_y, speed, direction):
         super().__init__()
-        self.image = pygame.Surface((100,100))
-        self.image.fill((0,0,255))
-        self.rect = self.image.get_rect(center = (player_pos_x,player_pos_y))
+        self.direction = direction
+        s_img = [pygame.image.load('spell/blueflame.png'), pygame.image.load('spell/dark.png'), \
+                 pygame.image.load('spell/holy_arrow.png'), pygame.image.load('spell/slash.png'), pygame.image.load('spell/firespell.png')] #rskil img list
+        self.flip = (direction == -1)
+        if self.flip:
+            #flip random img
+            self.image = pygame.transform.scale(pygame.transform.flip(random.choice(s_img), True, False), (100, 100))
+            self.rect = self.image.get_rect(center = (player_pos_x-75, player_pos_y))
+        else:
+            self.image = pygame.transform.scale(random.choice(s_img), (100, 100))
+            self.rect = self.image.get_rect(center = (player_pos_x+75, player_pos_y)) #spwan projectile at player location
         self.speed = speed
 
     def update(self):
-        self.rect.x += self.speed
+        self.rect.x += self.direction * self.speed
+        if self.rect.x < -200 or self.rect.x > 1500:
+            # destroy missle if travel to far
+            self.kill()
+        
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, scale, speed):
@@ -65,7 +77,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def create_magic_missle(self):
-        return magic_missle(self.rect.centerx +1, self.rect.centery, 15)
+        return magic_missle(self.rect.centerx, self.rect.centery, 15, player.direction)
     
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -76,9 +88,6 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.rect
-    
-    def create_magic_missle(self):
-        return magic_missle(self.rect.x +1, self.rect.y, 15)
 
 player = Player(200, 200, 3, 5)
 
@@ -138,6 +147,8 @@ while run:
                 moving_left = True
             if event.key == pygame.K_RIGHT:
                 moving_right = True
+            if event.key == pygame.K_z:
+                magic_group.add(player.create_magic_missle())
         #keyboard released
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
