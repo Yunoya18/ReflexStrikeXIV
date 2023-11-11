@@ -133,7 +133,6 @@ scroll = 0
 skill = False
 text = "testtest"
 create_mana = False
-# object
 
 # to start
 magic_group = pygame.sprite.Group()
@@ -185,7 +184,8 @@ while run:
         pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
         text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
         screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
-    screen.blit(mana().image, mana().rect)
+    
+    screen.blit(mana().image, mana().rect)   
 
     pygame.display.update()
     
