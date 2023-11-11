@@ -42,6 +42,3 @@ def skill():
 
     input_box.w = text_surface.get_width()+10
     pygame.display.flip()
-
-class skill1:
-    """test"""

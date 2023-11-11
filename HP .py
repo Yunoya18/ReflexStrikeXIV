@@ -38,53 +38,21 @@ class Player(pygame.sprite.Sprite):
     def full_hearts(self):
         for heart in range(self.health):
             if heart < self.health:
-                if heart == 5:
-                    screen.blit(full_5,(100, 100))
-                elif heart == 4:
-                    screen.blit(hp4,(100, 100))
-                elif heart == 3:
-                    screen.blit(hp3,(100, 100))
-                elif heart == 2:
-                    screen.blit(hp2,(100, 100))
-                elif heart == 1:
-                    screen.blit(hp1,(100, 100))
-                elif heart == 0:
-                    screen.blit(hp0,(100, 100))
+                screen.blit(hp[heart],(100, 100))
 
     def empty_hearts(self):
         for heart in range(self.max_health):
             if heart < self.health:
-                if heart == 5:
-                    screen.blit(full_5,(100, 100))
-                elif heart == 4:
-                    screen.blit(hp4,(100, 100))
-                elif heart == 3:
-                    screen.blit(hp3,(100, 100))
-                elif heart == 2:
-                    screen.blit(hp2,(100, 100))
-                elif heart == 1:
-                    screen.blit(hp1,(100, 100))
-                elif heart == 0:
-                    screen.blit(hp0,(100, 100))
+                screen.blit(hp[heart],(100, 100))
             if heart <= 0:
-                screen.blit(hp0,(100, 100))
+                screen.blit(hp[0],(100, 100))
+
     def mana_do(self):
         for mana in range(self.max_mana):
             if mana < self.mana:
-                if mana == 5:
-                    screen.blit(mp5,(100, 100))
-                elif mana == 4:
-                    screen.blit(mp4,(100, 100))
-                elif mana == 3:
-                    screen.blit(mp3,(100, 100))
-                elif mana == 2:
-                    screen.blit(mp2,(100, 100))
-                elif mana == 1:
-                    screen.blit(mp1,(100, 100))
-                elif mana == 0:
-                    screen.blit(mp0,(100, 100))
+                screen.blit(mp[mana],(100, 100))
             if mana == 0:
-                screen.blit(mp0,(100, 100))
+                screen.blit(mp[0],(100, 100))
 
     def update(self):
         self.full_hearts()
@@ -97,32 +65,20 @@ SCREEN_HEIGHT = 700
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 link = pygame.sprite.GroupSingle(Player())
-full_5 = pygame.image.load('asset/HP/HPFULL.png').convert_alpha()
-full_5 = pygame.transform.scale(full_5,(180,165))
-hp4 = pygame.image.load('asset/HP/HP4.png').convert_alpha()
-hp4 = pygame.transform.scale(hp4,(180,165))
-hp3 = pygame.image.load('asset/HP/HP3.png').convert_alpha()
-hp3 = pygame.transform.scale(hp3,(180,165))
-hp2 = pygame.image.load('asset/HP/HP2.png').convert_alpha()
-hp2 = pygame.transform.scale(hp2,(180,165))
-hp1 = pygame.image.load('asset/HP/HP1.png').convert_alpha()
-hp1 = pygame.transform.scale(hp1,(180,165))
-hp0 = pygame.image.load('asset/HP/HP0.png').convert_alpha()
-hp0 = pygame.transform.scale(hp0,(180,165))
 
-mp0 = pygame.image.load('asset/HP/MP0.png').convert_alpha()
-mp0 = pygame.transform.scale(mp0,(180,165))
-mp1 = pygame.image.load('asset/HP/MP1.png').convert_alpha()
-mp1 = pygame.transform.scale(mp1,(180,165))
-mp2 = pygame.image.load('asset/HP/MP2.png').convert_alpha()
-mp2 = pygame.transform.scale(mp2,(180,165))
-mp3 = pygame.image.load('asset/HP/MP3.png').convert_alpha()
-mp3 = pygame.transform.scale(mp3,(180,165))
-mp4 = pygame.image.load('asset/HP/MP4.png').convert_alpha()
-mp4 = pygame.transform.scale(mp4,(180,165))
-mp5 = pygame.image.load('asset/HP/MPFULL.png').convert_alpha()
-mp5 = pygame.transform.scale(mp5,(180,165))
+hp = [pygame.transform.scale(pygame.image.load('asset/HP/HP0.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/HP1.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/HP2.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/HP3.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/HP4.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/HPFULL.png').convert_alpha(),(180,165))]
 
+mp = [pygame.transform.scale(pygame.image.load('asset/HP/MP0.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/MP1.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/MP2.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/MP3.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/MP4.png').convert_alpha(),(180,165)),\
+    pygame.transform.scale(pygame.image.load('asset/HP/MPFULL.png').convert_alpha(),(180,165))]
 
 #color setting
 PURPLE2 = (81, 43, 129)
