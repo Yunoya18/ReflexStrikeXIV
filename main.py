@@ -1,11 +1,12 @@
 from typing import Any
 import pygame, sys
 import math
+import random
 
 #from pygame.sprite import _Group
 from level101 import *
-from level import Level
 from tiles import Tile
+import HP
 
 #normal projectile ---not skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -146,6 +147,14 @@ class toggle_skill(pygame.sprite.Sprite):
         self.color = pygame.Color("lightskyblue3")
         self.box = pygame.Rect(500, 50, 200, 50)
 
+class mana(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        #img = pygame.image.load('')
+        #self.image = pygame.transform.scale(img, img.get_width(), img.get_height())
+        #self.rect = self.image.get_rect()
+        #self.rect.center = (50, random.randrange(0, 650))
+
 def main():
     pygame.init()
 
@@ -160,11 +169,8 @@ def main():
     scroll = 0
     skill = False
     text = "testtest"
+    link = pygame.sprite.GroupSingle()
     # object
-
-    # current cord
-    x = 250
-    y = 250
 
     # to start
     player = Player(200, 200, 0.25)
@@ -186,21 +192,26 @@ def main():
                         text = text[:-1]
                     else:
                         text += event.unicode
-        if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
-            magic_group.add(player.create_magic_missle())
+            if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
+                magic_group.add(player.create_magic_missle())
+
+        #if mana.colliderect(500, 500):
+        #    link.sprite.get_mana()
 
         level.run(skill)
 
         #update
-        #บรรทัดล่างไม่ได้เกี่ยวกับที่ขยับอยู่ตอนนี้ มันupdateเองใน level
         #player.update()
         magic_group.update()
+        #link.update()
 
         #draw
         magic_group.draw(screen)
-        pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
-        text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
-        screen.blit(text_surface, (toggle_skill().box.x+5, toggle_skill().box.y+5))
+        if skill:
+            pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
+            text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
+            screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
+        #pygame.draw.rect(screen, (255, 255, 255), mana)
 
         pygame.display.update()
         clock.tick(60)
