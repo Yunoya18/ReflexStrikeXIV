@@ -118,10 +118,10 @@ class toggle_skill(pygame.sprite.Sprite):
 class mana(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        #img = pygame.image.load('')
-        #self.image = pygame.transform.scale(img, img.get_width(), img.get_height())
-        #self.rect = self.image.get_rect()
-        #self.rect.center = (50, random.randrange(0, 650))
+        self.img = pygame.image.load('asset/HP/big_mana.png')
+        self.image = pygame.transform.scale(self.img, (self.img.get_width(), self.img.get_height()))
+        self.rect = self.image.get_rect()
+        self.rect.center = (100, 100)
 
 
 pygame.display.set_caption("SpellStrikeXIV")
@@ -132,11 +132,9 @@ tiles = math.ceil(1200 / bg_width) + 1
 scroll = 0
 skill = False
 text = "testtest"
-link = pygame.sprite.GroupSingle()
+create_mana = False
 # object
-# current cord
-x = 250
-y = 250
+
 # to start
 magic_group = pygame.sprite.Group()
 
@@ -187,7 +185,7 @@ while run:
         pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
         text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
         screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
-    #pygame.draw.rect(screen, (255, 255, 255), mana)
+    screen.blit(mana().image, mana().rect)
 
     pygame.display.update()
     
