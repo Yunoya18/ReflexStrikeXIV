@@ -4,7 +4,7 @@ import math
 
 #from pygame.sprite import _Group
 from level101 import *
-from level import Level
+
 from tiles import Tile
 
 #normal projectile ---not skill---
