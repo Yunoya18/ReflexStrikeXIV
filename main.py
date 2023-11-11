@@ -1,6 +1,7 @@
 from typing import Any
 import pygame, sys
 import math
+import random
 
 #from pygame.sprite import _Group
 from level101 import *
@@ -86,6 +87,31 @@ class toggle_skill(pygame.sprite.Sprite):
         self.font = pygame.font.Font(None, 32)
         self.color = pygame.Color("lightskyblue3")
         self.box = pygame.Rect(500, 50, 200, 50)
+
+class mana(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        #img = pygame.image.load('')
+        #self.image = pygame.transform.scale(img, img.get_width(), img.get_height())
+        #self.rect = self.image.get_rect()
+        #self.rect.center = (50, random.randrange(0, 650))
+
+
+
+
+    screen = pygame.display.set_mode((1200, 700))
+    clock = pygame.time.Clock()
+    level = Level(level_map,screen)
+    pygame.display.set_caption("SpellStrikeXIV")
+    run = True
+    bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
+    bg_width = bg.get_width()
+    tiles = math.ceil(1200 / bg_width) + 1
+    scroll = 0
+    skill = False
+    text = "testtest"
+    link = pygame.sprite.GroupSingle()
+    # object
     
     
 
@@ -98,6 +124,7 @@ tiles = math.ceil(1200 / bg_width) + 1
 scroll = 0
 skill = False
 text = "testtest"
+link = pygame.sprite.GroupSingle()
 # object
 
 # current cord
@@ -138,12 +165,31 @@ while run:
     if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
         magic_group.add(player.create_magic_missle())
 
+        #if mana.colliderect(500, 500):
+        #    link.sprite.get_mana()
 
 
+        #update
+        #player.update()
+        magic_group.update()
+        #link.update()
     #update
     #บรรทัดล่างไม่ได้เกี่ยวกับที่ขยับอยู่ตอนนี้ มันupdateเองใน level
     #player.update()
     magic_group.update()
+
+        #draw
+        magic_group.draw(screen)
+        if skill:
+            pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
+            text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
+            screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
+        #pygame.draw.rect(screen, (255, 255, 255), mana)
+
+        
+        
+
+
 
     #draw
     magic_group.draw(screen)
