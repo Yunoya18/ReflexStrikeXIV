@@ -21,8 +21,8 @@ FPS = 60
 clock = pygame.time.Clock()
 
 # Button start / restart
-strat_img = pygame.image.load('asset/HP/start.png').convert_alpha()
-exit_img = pygame.image.load('asset/HP/exit.png').convert_alpha()
+strat_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
+exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
 
 
 #create button insrances
