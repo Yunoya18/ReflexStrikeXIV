@@ -4,8 +4,16 @@ import math
 
 #from pygame.sprite import _Group
 from level101 import *
-from level import Level
 from tiles import Tile
+pygame.init()
+
+screen = pygame.display.set_mode((1200, 700))
+#define player action variables
+moving_left = False
+moving_right = False
+clock = pygame.time.Clock()
+FPS = 60
+
 
 #normal projectile ---not skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -20,31 +28,38 @@ class magic_missle(pygame.sprite.Sprite):
         self.rect.x += self.speed
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale):
+    def __init__(self, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
+        self.speed = speed
         img = pygame.image.load('MCMAIN/MCCAST1.1.jpg')
         self.image = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
+        
         # player movement
-        self.direction = pygame.math.Vector2(0,0)
-        self.speed = 8
+        self.direction = 1
+        self.flip = False
         self.gravity = 0.8
         self.jump_speed = -16
 
-    def get_input(self):
-        keys = pygame.key.get_pressed()
+    def move(self, moving_left, moving_right):
+        dx = 0
+        dy = 0
 
-        if keys[pygame.K_RIGHT]:
-            self.direction.x = 1
-        elif keys[pygame.K_LEFT]:
-            self.direction.x = -1
-        else:
-            self.direction.x = 0
+        if moving_left:
+            dx =  -self.speed
+            self.flip = True
+            self.direction = -1
+        if moving_right:
+            dx = self.speed
+            self.flip = False
+            self.direction = -1
+        
+        self.rect.x += dx
+        self.rect.y += dy
 
-        if keys[pygame.K_UP]:
-            self.jump()
+    def draw(self):
+        screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
 
     def create_magic_missle(self):
         return magic_missle(self.rect.centerx +1, self.rect.centery, 15)
@@ -55,89 +70,15 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         self.direction.y = self.jump_speed
-
+    
     def update(self):
         self.get_input()
         self.rect
     
     def create_magic_missle(self):
         return magic_missle(self.rect.x +1, self.rect.y, 15)
+player = Player(200, 200, 0.25, 5)
 
-class Level:
-    def __init__(self,level_data,surface):
-
-        #level setup
-        self.display_surface = surface
-        self.setup_level(level_data)
-        self.world_shift = 0
-
-    def setup_level(self,layout):
-        self.tiles = pygame.sprite.Group()
-        self.player = pygame.sprite.GroupSingle()
-        for row_index,row in enumerate(layout):
-            for col_index,cell in enumerate(row):
-                x = col_index * tile_size
-                y = row_index * tile_size
-
-                if cell == 'X':
-                    tile =Tile((x,y),tile_size)
-                    self.tiles.add(tile)
-                if cell == 'P':
-                    player_sprite = Player(200, 200, 0.25)
-                    self.player.add(player_sprite)
-
-    def scroll_x(self):
-        player = self.player.sprite
-        player_x = player.rect.centerx
-        direction_x = player.direction.x
-
-        if player_x < screen_width / 4 and direction_x < 0:
-            self.world_shift = 8
-            player.speed = 0
-        elif player_x > screen_width - (screen_width / 4) and direction_x > 0:
-            self.world_shift = -8
-            player.speed = 0
-        else:
-            self.world_shift = 0
-            player.speed = 8
-
-    def horizontal_movement_collision(self):
-        player = self.player.sprite
-        player.rect.x += player.direction.x * player.speed
-
-        for sprite in self.tiles.sprites():
-            if sprite.rect.colliderect(player.rect):
-                if player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
-                elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
-
-    def vertical_movement_collision(self):
-        player = self.player.sprite
-        player.apply_gravity()
-
-        for sprite in self.tiles.sprites():
-            if sprite.rect.colliderect(player.rect):
-                if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
-                    player.direction.y = 0
-                elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
-                    player.direction.y = 0
-
-    def run(self, skill):
-
-        # level tiles
-        self.tiles.update(self.world_shift)
-        self.tiles.draw(self.display_surface)
-        self.scroll_x()
-
-        # Player
-        if not skill:
-            self.player.update()
-        self.horizontal_movement_collision()
-        self.vertical_movement_collision()
-        self.player.draw(self.display_surface)
 
 class toggle_skill(pygame.sprite.Sprite):
     def __init__(self):
@@ -145,65 +86,71 @@ class toggle_skill(pygame.sprite.Sprite):
         self.font = pygame.font.Font(None, 32)
         self.color = pygame.Color("lightskyblue3")
         self.box = pygame.Rect(500, 50, 200, 50)
+    
+    
 
-def main():
-    pygame.init()
 
-    screen = pygame.display.set_mode((1200, 700))
-    clock = pygame.time.Clock()
-    level = Level(level_map,screen)
-    pygame.display.set_caption("SpellStrikeXIV")
-    run = True
-    bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
-    bg_width = bg.get_width()
-    tiles = math.ceil(1200 / bg_width) + 1
-    scroll = 0
-    skill = False
-    text = "testtest"
-    # object
+pygame.display.set_caption("SpellStrikeXIV")
+run = True
+bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
+bg_width = bg.get_width()
+tiles = math.ceil(1200 / bg_width) + 1
+scroll = 0
+skill = False
+text = "testtest"
+# object
 
-    # current cord
-    x = 250
-    y = 250
+# current cord
+x = 250
+y = 250
 
-    # to start
-    player = Player(200, 200, 0.25)
-    magic_group = pygame.sprite.Group()
+# to start
+magic_group = pygame.sprite.Group()
 
-    while run:
-        pygame.time.delay(10)
-        for i in range(0, tiles):
-            screen.blit(bg, (i * bg_width + scroll, 0))
-        scroll -= 5
-        if abs(scroll) > bg_width:
-            scroll = 0
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if skill:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        text = text[:-1]
-                    else:
-                        text += event.unicode
-        if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
-            magic_group.add(player.create_magic_missle())
+while run:
+    
+    player.draw()
+    player.move(moving_left, moving_right)
+    clock.tick(FPS)
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        if skill:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    text = text[:-1]
+                else:
+                    text += event.unicode
+        #keyboard press
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                moving_left = True
+            if event.key == pygame.K_RIGHT:
+                moving_right = True
+        #keyboard released
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                moving_left = False
+            if event.key == pygame.K_RIGHT:
+                moving_right = False
 
-        level.run(skill)
+    if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
+        magic_group.add(player.create_magic_missle())
 
-        #update
-        #บรรทัดล่างไม่ได้เกี่ยวกับที่ขยับอยู่ตอนนี้ มันupdateเองใน level
-        #player.update()
-        magic_group.update()
 
-        #draw
-        magic_group.draw(screen)
-        pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
-        text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
-        screen.blit(text_surface, (toggle_skill().box.x+5, toggle_skill().box.y+5))
 
-        pygame.display.update()
-        clock.tick(60)
-    pygame.quit()
+    #update
+    #บรรทัดล่างไม่ได้เกี่ยวกับที่ขยับอยู่ตอนนี้ มันupdateเองใน level
+    #player.update()
+    magic_group.update()
 
-main()
+    #draw
+    magic_group.draw(screen)
+    pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
+    text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
+    screen.blit(text_surface, (toggle_skill().box.x+5, toggle_skill().box.y+5))
+    pygame.display.update()
+    
+    
+pygame.quit()
