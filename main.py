@@ -6,7 +6,6 @@ import random
 #from pygame.sprite import _Group
 from level101 import *
 from tiles import Tile
-import HP
 
 #normal projectile ---not skill---
 class magic_missle(pygame.sprite.Sprite):
