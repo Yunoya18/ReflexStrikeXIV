@@ -13,10 +13,11 @@ moving_right = False
 clock = pygame.time.Clock()
 FPS = 60
 BG = (0, 0, 0)
-
+RED = (255, 0, 0)
+GRAVITY = 0.75
 def draw_bg():
     screen.fill(BG)
-
+    pygame.draw.line(screen, RED, (0, 600), (1200, 600))
 
 #projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -47,6 +48,10 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.char_type = char_type
         self.speed = speed
+        self.direction = 1
+        self.vel_y = 0
+        self.jumps = False
+        self.flip = False
         self.animation_list = []
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
@@ -57,13 +62,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.animation_list[self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
-        # player movement
-        self.direction = 1
-        self.flip = False
-        self.gravity = 0.8
-        self.jump_speed = -16
-
+        
     def move(self, moving_left, moving_right):
         dx = 0
         dy = 0
@@ -75,6 +74,21 @@ class Player(pygame.sprite.Sprite):
             dx = self.speed
             self.flip = False
             self.direction = 1
+        
+        #Jump
+        if self.jumps == True:
+            self.vel_y = -11
+            self.jumps = False
+
+        #GRAVITY
+        self.vel_y += GRAVITY
+        if self.vel_y > 10:
+            self.vel_y 
+        dy += self.vel_y
+
+        #check collision floor
+        if self.rect.bottom + dy > 600:
+            dy = 600 - self.rect.bottom
         
         self.rect.x += dx
         self.rect.y += dy
@@ -94,13 +108,6 @@ class Player(pygame.sprite.Sprite):
 
     def create_magic_missle(self):
         return magic_missle(self.rect.centerx, self.rect.centery, 15, player.direction)
-    
-    def apply_gravity(self):
-        self.direction.y += self.gravity
-        self.rect.y += self.direction.y
-
-    def jump(self):
-        self.direction.y = self.jump_speed
 
     def update(self):
         self.rect
@@ -161,6 +168,8 @@ while run:
                 moving_left = True
             if event.key == pygame.K_RIGHT:
                 moving_right = True
+            if event.key == pygame.K_UP:
+                player.jumps = True
             if event.key == pygame.K_z:
                 magic_group.add(player.create_magic_missle())
         #keyboard released
