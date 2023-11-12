@@ -175,6 +175,7 @@ current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 font = pygame.Font('asset/HP/Coiny.ttf', 36)
 score = 0
+is_paused = False
 
 # enemy
 animated_enemies = []
@@ -206,16 +207,18 @@ while run:
         else:
             #keyboard press
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and is_paused == False:
                     moving_left = True
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and is_paused == False:
                     moving_right = True
-                if event.key == pygame.K_UP and player.alive:
+                if (event.key == pygame.K_UP and player.alive) and is_paused == False:
                     player.jump = True
-                if event.key == pygame.K_z:
+                if event.key == pygame.K_z and is_paused == False:
                     magic_group.add(player.create_magic_missle())
                     #test
                     score += 1
+                if event.key == pygame.K_p:
+                    is_paused = not is_paused
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -228,50 +231,54 @@ while run:
             text = ""
             print(check_word)
 
-    if create_mana:
-        current_mana.update()
-        if current_mana.rect.collidepoint(player.rect.center):
-            mana_x = random.randrange(0, 1100)
-            current_mana = mana(mana_x, 0)
-            stamina = min(5, stamina + 1)
-            create_mana = False
-            last = pygame.time.get_ticks()
+    if is_paused:
+        paused_text = font.render(":)", False, (255, 255, 255))
+        screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
+
     else:
-        now = pygame.time.get_ticks()
-        if now - last >= 5000: #delay 5 sec
-            last = now
-            create_mana = True
+        if create_mana:
+            current_mana.update()
+            if current_mana.rect.collidepoint(player.rect.center):
+                mana_x = random.randrange(0, 1100)
+                current_mana = mana(mana_x, 0)
+                stamina = min(5, stamina + 1)
+                create_mana = False
+                last = pygame.time.get_ticks()
+        else:
+            now = pygame.time.get_ticks()
+            if now - last >= 5000: #delay 5 sec
+                last = now
+                create_mana = True
 
-    #update
-    magic_group.update()
-    Status().update(health, stamina)
+        #update
+        magic_group.update()
+        Status().update(health, stamina)
 
-    #draw
-    magic_group.draw(screen)
-    if skill:
-        pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
-        text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
-        screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
-    if stamina < 5 and create_mana:
-        screen.blit(current_mana.image, current_mana.rect)
-    
-    #enemy
-    if random.randint(0, 100) < 5:
-        new_enemy = AnimatedEnemy()
-        animated_enemies.append(new_enemy)
+        #draw
+        magic_group.draw(screen)
+        if skill:
+            pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
+            text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
+            screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
+        if stamina < 5 and create_mana:
+            screen.blit(current_mana.image, current_mana.rect)
 
-    for enemy in animated_enemies:
-        enemy.move()
-        enemy.update_animation()
-        if enemy.rect.right < 0:
-            enemy.play_death_sound()
-            animated_enemies.remove(enemy)
+        #enemy
+        if random.randint(0, 100) < 5:
+            new_enemy = AnimatedEnemy()
+            animated_enemies.append(new_enemy)
+        for enemy in animated_enemies:
+            enemy.move()
+            enemy.update_animation()
+            if enemy.rect.right < 0:
+                enemy.play_death_sound()
+                animated_enemies.remove(enemy)
 
-    for enemy in animated_enemies:
-        enemy.draw()
-        enemy.draw_hitbox()
-    score_text = font.render(f"score: {score}", True, (255, 255, 255))
-    screen.blit(score_text, (screen_width - 200, 10))
-    pygame.display.update()
-    
+        for enemy in animated_enemies:
+            enemy.draw()
+            enemy.draw_hitbox()
+        score_text = font.render(f"score: {score}", True, (255, 255, 255))
+        screen.blit(score_text, (screen_width - 200, 10))
+        pygame.display.update()
+
 pygame.quit()
