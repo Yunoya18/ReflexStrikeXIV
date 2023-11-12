@@ -44,6 +44,13 @@ class magic_missle(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center = (player_pos_x+75, player_pos_y)) #spwan projectile at player location
         self.speed = speed
 
+    def sfx():
+        channel = pygame.mixer.find_channel() 
+        sfx_spell =  pygame.mixer.Sound('sound/firecast01.mp3')
+        if channel:
+            channel.set_volume(0.5)
+            channel.play(sfx_spell)
+            
     def update(self):
         global score
         self.rect.x += self.direction * self.speed
@@ -227,6 +234,7 @@ while run:
                     player.jump = True
                 if event.key == pygame.K_z and is_paused == False:
                     magic_group.add(player.create_magic_missle())
+                    magic_missle.sfx()
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
             #keyboard released

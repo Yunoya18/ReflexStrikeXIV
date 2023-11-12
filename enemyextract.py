@@ -42,8 +42,12 @@ class AnimatedEnemy:
         self.current_frame_index = (self.current_frame_index + 1) % len(self.animation_frames)
 
     def play_death_sound(self):
-        pygame.mixer.Sound('playdead.mp3').play()
-        
+        channel = pygame.mixer.find_channel()
+        death_sound = pygame.mixer.Sound('sound/playdead.mp3')
+        if channel:
+            channel.set_volume(0.5)
+            channel.play(death_sound)
+
 animated_enemies = []
 
 game_clock = pygame.time.Clock()
