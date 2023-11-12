@@ -216,8 +216,6 @@ while run:
             text = ""
 
     if moving_left or moving_right:
-        player.update_action(1)
-    else:
         player.update_action(0)
     player.move(moving_left, moving_right)
 
