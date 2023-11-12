@@ -207,6 +207,13 @@ while run:
     draw_bg()
     player.update_animation()
     player.draw()
+    now = pygame.time.get_ticks()
+
+    if skill:
+        if now - skill_start > stamina * 2000:
+            skill = False
+            stamina = 0
+            text = ""
 
     if moving_left or moving_right:
         player.update_action(1)
@@ -232,9 +239,9 @@ while run:
                     moving_right = True
                 if (event.key == pygame.K_UP and player.alive) and is_paused == False:
                     player.jump = True
-                if event.key == pygame.K_z and is_paused == False:
-                    magic_group.add(player.create_magic_missle())
-                    magic_missle.sfx()
+                if event.key == pygame.K_RETURN and stamina > 0 and is_paused == False:
+                    skill = True
+                    skill_start = pygame.time.get_ticks()
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
             #keyboard released
@@ -243,8 +250,9 @@ while run:
                     moving_left = False
                 if event.key == pygame.K_RIGHT:
                     moving_right = False
-        if text == check_word: #ตรงกับคำที่ generate ยังไม่ได้แก้
+        if text == check_word:
             magic_group.add(player.create_magic_missle())
+            magic_missle.sfx()
             check_word = WORDS[random.randint(0, 10000)]
             text = ""
             print(check_word)
