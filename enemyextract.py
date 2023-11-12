@@ -43,7 +43,7 @@ class AnimatedEnemy:
 
     def play_death_sound(self):
         pygame.mixer.Sound('playdead.mp3').play()
-
+        
 animated_enemies = []
 
 game_clock = pygame.time.Clock()

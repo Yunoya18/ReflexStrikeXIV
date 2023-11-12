@@ -14,6 +14,9 @@ clock = pygame.time.Clock()
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = urllib.request.urlopen(word_site)
 txt = response.read().decode()
+#score
+score = 0
+
 WORDS = txt.splitlines()
 FPS = 60
 BG = (0, 0, 0)
@@ -42,6 +45,7 @@ class magic_missle(pygame.sprite.Sprite):
         self.speed = speed
 
     def update(self):
+        global score
         self.rect.x += self.direction * self.speed
         if self.rect.x < -200 or self.rect.x > 1500:
             # destroy missle if travel to far
@@ -51,6 +55,7 @@ class magic_missle(pygame.sprite.Sprite):
                 # collision with enemy
                 animated_enemies.remove(enemy)
                 enemy.play_death_sound()
+                score += 1
                 self.kill()
                 break
         
@@ -182,7 +187,6 @@ mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 font = pygame.font.Font('asset/HP/Coiny.ttf', 36)
-score = 0
 is_paused = False
 
 # enemy
@@ -223,8 +227,6 @@ while run:
                     player.jump = True
                 if event.key == pygame.K_z and is_paused == False:
                     magic_group.add(player.create_magic_missle())
-                    #test
-                    score += 1
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
             #keyboard released
