@@ -25,8 +25,9 @@ def draw_bg():
 
 #projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
-    def __init__(self, player_pos_x, player_pos_y, speed, direction):
+    def __init__(self, player_pos_x, player_pos_y, speed, direction, enemies):
         super().__init__()
+        self.enemies = enemies
         self.direction = direction
         s_img = [pygame.image.load('spell/blueflame.png'), pygame.image.load('spell/dark.png'), \
                  pygame.image.load('spell/holy_arrow.png'), pygame.image.load('spell/slash.png'), pygame.image.load('spell/firespell.png')] #rskil img list
@@ -45,6 +46,13 @@ class magic_missle(pygame.sprite.Sprite):
         if self.rect.x < -200 or self.rect.x > 1500:
             # destroy missle if travel to far
             self.kill()
+        for enemy in self.enemies:
+            if self.rect.colliderect(enemy.rect):
+                # collision with enemy
+                animated_enemies.remove(enemy)
+                enemy.play_death_sound()
+                self.kill()
+                break
         
 
 class Player(pygame.sprite.Sprite):
@@ -130,7 +138,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def create_magic_missle(self):
-        return magic_missle(self.rect.centerx, self.rect.centery, 15, player.direction)
+        return magic_missle(self.rect.centerx, self.rect.centery, 15, player.direction, animated_enemies)
 
     def update(self):
         self.rect
@@ -173,7 +181,7 @@ create_mana = True
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
-font = pygame.Font('asset/HP/Coiny.ttf', 36)
+font = pygame.font.Font('asset/HP/Coiny.ttf', 36)
 score = 0
 is_paused = False
 
@@ -264,7 +272,7 @@ while run:
             screen.blit(current_mana.image, current_mana.rect)
 
         #enemy
-        if random.randint(0, 100) < 5:
+        if 20 < random.randint(0, 100) < 25:
             new_enemy = AnimatedEnemy()
             animated_enemies.append(new_enemy)
         for enemy in animated_enemies:
