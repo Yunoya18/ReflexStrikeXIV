@@ -5,6 +5,7 @@ import random
 
 #from pygame.sprite import _Group
 from level101 import *
+from HP import Status
 pygame.init()
 screen = pygame.display.set_mode((1200, 700))
 #define player action variables
@@ -142,13 +143,12 @@ class toggle_skill(pygame.sprite.Sprite):
         self.box = pygame.Rect(500, 50, 200, 50)
 
 class mana(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x):
         super().__init__()
         self.img = pygame.image.load('asset/HP/big_mana.png')
         self.image = pygame.transform.scale(self.img, (self.img.get_width(), self.img.get_height()))
         self.rect = self.image.get_rect()
-        self.rect.center = (100, 100)
-
+        self.rect.center = (x, 550)
 
 pygame.display.set_caption("SpellStrikeXIV")
 run = True
@@ -158,7 +158,11 @@ tiles = math.ceil(1200 / bg_width) + 1
 scroll = 0
 skill = False
 text = "testtest"
-create_mana = False
+mana_x = random.randrange(0, 600)
+health = 5
+stamina = 0
+last = pygame.time.get_ticks()
+create_mana = True
 
 # to start
 magic_group = pygame.sprite.Group()
@@ -168,14 +172,12 @@ while run:
     draw_bg()
     player.update_animation()
     player.draw()
-    
+
     if moving_left or moving_right:
         player.update_action(1)
     else:
         player.update_action(0)
     player.move(moving_left, moving_right)
-    
-    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -205,13 +207,20 @@ while run:
             if event.key == pygame.K_RIGHT:
                 moving_right = False
 
-    #if mana.colliderect(500, 500):
-    #    link.sprite.get_mana()
+    if create_mana:
+        if mana(mana_x).rect.collidepoint(player.rect.center):
+            mana_x = random.randrange(0, 600)
+            stamina = min(5, stamina + 1)
+            create_mana = False
+    else:
+        now = pygame.time.get_ticks()
+        if now - last >= 2000: #delay 2 sec
+            last = now
+            create_mana = True
 
     #update
-    #player.update()
     magic_group.update()
-    #link.update()
+    Status().update(health, stamina)
 
     #draw
     magic_group.draw(screen)
@@ -219,8 +228,8 @@ while run:
         pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
         text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
         screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
-    
-    screen.blit(mana().image, mana().rect)   
+    if stamina < 5 and create_mana:
+        screen.blit(mana(mana_x).image, mana(mana_x).rect)
 
     pygame.display.update()
     
