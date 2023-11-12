@@ -2,6 +2,7 @@ from typing import Any
 import pygame, math, random, urllib.request
 
 #from pygame.sprite import _Group
+from enemyextract import AnimatedEnemy
 from level101 import *
 from HP import Status
 pygame.init()
@@ -173,6 +174,9 @@ mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 
+# enemy
+animated_enemies = []
+
 # to start
 magic_group = pygame.sprite.Group()
 
@@ -246,6 +250,22 @@ while run:
         screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
     if stamina < 5 and create_mana:
         screen.blit(current_mana.image, current_mana.rect)
+    
+    #enemy
+    if random.randint(0, 100) < 5:
+        new_enemy = AnimatedEnemy()
+        animated_enemies.append(new_enemy)
+
+    for enemy in animated_enemies:
+        enemy.move()
+        enemy.update_animation()
+        if enemy.rect.right < 0:
+            enemy.play_death_sound()
+            animated_enemies.remove(enemy)
+
+    for enemy in animated_enemies:
+        enemy.draw()
+        enemy.draw_hitbox()
 
     pygame.display.update()
     
