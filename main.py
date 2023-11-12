@@ -143,12 +143,18 @@ class toggle_skill(pygame.sprite.Sprite):
         self.box = pygame.Rect(500, 50, 200, 50)
 
 class mana(pygame.sprite.Sprite):
-    def __init__(self, x):
+    def __init__(self, x, y):
         super().__init__()
         self.img = pygame.image.load('asset/HP/big_mana.png')
         self.image = pygame.transform.scale(self.img, (self.img.get_width(), self.img.get_height()))
         self.rect = self.image.get_rect()
-        self.rect.center = (x, 550)
+        self.rect.center = (x, y)
+        self.speed = 2
+    
+    def update(self):
+        if self.rect.y + self.speed < 550:
+            self.rect.y += self.speed
+
 
 pygame.display.set_caption("SpellStrikeXIV")
 run = True
@@ -158,11 +164,12 @@ tiles = math.ceil(1200 / bg_width) + 1
 scroll = 0
 skill = False
 text = "testtest"
-mana_x = random.randrange(0, 600)
 health = 5
 stamina = 0
 last = pygame.time.get_ticks()
 create_mana = True
+mana_x = random.randrange(0, 1100)
+current_mana = mana(mana_x, 0)
 
 # to start
 magic_group = pygame.sprite.Group()
@@ -208,8 +215,9 @@ while run:
                 moving_right = False
 
     if create_mana:
-        if mana(mana_x).rect.collidepoint(player.rect.center):
-            mana_x = random.randrange(0, 600)
+        if current_mana.rect.collidepoint(player.rect.center):
+            mana_x = random.randrange(0, 1100)
+            current_mana = mana(mana_x, 0)
             stamina = min(5, stamina + 1)
             create_mana = False
     else:
@@ -221,6 +229,7 @@ while run:
     #update
     magic_group.update()
     Status().update(health, stamina)
+    current_mana.update()
 
     #draw
     magic_group.draw(screen)
@@ -229,7 +238,7 @@ while run:
         text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
         screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
     if stamina < 5 and create_mana:
-        screen.blit(mana(mana_x).image, mana(mana_x).rect)
+        screen.blit(current_mana.image, current_mana.rect)
 
     pygame.display.update()
     
