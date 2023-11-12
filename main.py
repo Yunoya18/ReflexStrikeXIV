@@ -157,6 +157,8 @@ class mana(pygame.sprite.Sprite):
 
 
 pygame.display.set_caption("SpellStrikeXIV")
+icon = pygame.image.load('asset/HP/big_mana.png')
+pygame.display.set_icon(icon)
 run = True
 bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 bg_width = bg.get_width()
