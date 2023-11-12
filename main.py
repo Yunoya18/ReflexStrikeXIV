@@ -1,7 +1,5 @@
 from typing import Any
-import pygame, sys
-import math
-import random
+import pygame, math, random, urllib.request
 
 #from pygame.sprite import _Group
 from level101 import *
@@ -12,6 +10,10 @@ screen = pygame.display.set_mode((1200, 700))
 moving_left = False
 moving_right = False
 clock = pygame.time.Clock()
+word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
+response = urllib.request.urlopen(word_site)
+txt = response.read().decode()
+WORDS = txt.splitlines()
 FPS = 60
 BG = (0, 0, 0)
 RED = (255, 0, 0)
@@ -157,21 +159,19 @@ class mana(pygame.sprite.Sprite):
 
 
 pygame.display.set_caption("SpellStrikeXIV")
-icon = pygame.image.load('asset/HP/big_mana.png')
-pygame.display.set_icon(icon)
 run = True
 bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 bg_width = bg.get_width()
 tiles = math.ceil(1200 / bg_width) + 1
 scroll = 0
 skill = False
-text = "testtest"
+text = ""
 health = 5
 stamina = 0
-last = pygame.time.get_ticks()
 create_mana = True
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
+check_word = WORDS[random.randint(0, 10000)]
 
 # to start
 magic_group = pygame.sprite.Group()
@@ -197,41 +197,46 @@ while run:
                     text = text[:-1]
                 else:
                     text += event.unicode
-        if not text: #ตรงกับคำที่ generate ยังไม่ได้แก้
+        else:
+            #keyboard press
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    moving_left = True
+                if event.key == pygame.K_RIGHT:
+                    moving_right = True
+                if event.key == pygame.K_UP and player.alive:
+                    player.jump = True
+                if event.key == pygame.K_z:
+                    magic_group.add(player.create_magic_missle())
+            #keyboard released
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    moving_left = False
+                if event.key == pygame.K_RIGHT:
+                    moving_right = False
+        if text == check_word: #ตรงกับคำที่ generate ยังไม่ได้แก้
             magic_group.add(player.create_magic_missle())
-        #keyboard press
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                moving_left = True
-            if event.key == pygame.K_RIGHT:
-                moving_right = True
-            if event.key == pygame.K_UP and player.alive:
-                player.jump = True
-            if event.key == pygame.K_z:
-                magic_group.add(player.create_magic_missle())
-        #keyboard released
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                moving_left = False
-            if event.key == pygame.K_RIGHT:
-                moving_right = False
+            check_word = WORDS[random.randint(0, 10000)]
+            text = ""
+            print(check_word)
 
     if create_mana:
+        current_mana.update()
         if current_mana.rect.collidepoint(player.rect.center):
             mana_x = random.randrange(0, 1100)
             current_mana = mana(mana_x, 0)
             stamina = min(5, stamina + 1)
             create_mana = False
+            last = pygame.time.get_ticks()
     else:
         now = pygame.time.get_ticks()
-        if now - last >= 2000: #delay 2 sec
+        if now - last >= 5000: #delay 5 sec
             last = now
             create_mana = True
 
     #update
     magic_group.update()
     Status().update(health, stamina)
-    current_mana.update()
 
     #draw
     magic_group.draw(screen)
