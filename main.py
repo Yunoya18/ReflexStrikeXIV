@@ -244,8 +244,9 @@ current_mana = mana(mana_x, 0)
 last = 0
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
-pygame.mixer.music.load('sound/test_misc.mp3')
+pygame.mixer.music.load('sound/gameost01.mp3')
 pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 
 # enemy
 animated_enemies = []
@@ -343,6 +344,11 @@ while run:
     else:
         current_mana.update()
         if current_mana.rect.collidepoint(player.rect.center):
+                channel = pygame.mixer.find_channel() 
+                mana_sound =  pygame.mixer.Sound('sound/mana_refil.mp3')
+                if channel:
+                    channel.set_volume(0.5)
+                    channel.play(mana_sound)
                 mana_x = random.randrange(0, 1100)
                 current_mana = mana(mana_x, 0)
                 stamina = min(5, stamina + 1)
