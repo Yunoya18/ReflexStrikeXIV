@@ -296,6 +296,12 @@ while run:
                     health = 5
                     player = Player('player', 200, 200, 3, 5)
                 if event.key == pygame.K_m and (is_paused or health == 0):
+                    score = 0
+                    animated_enemies.clear()
+                    is_paused = False
+                    stamina = 5
+                    health = 5
+                    player = Player('player', 200, 200, 3, 5)
                     start_game = False
             #keyboard released
             if event.type == pygame.KEYUP:
