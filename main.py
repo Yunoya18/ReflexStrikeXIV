@@ -164,6 +164,9 @@ class Player(pygame.sprite.Sprite):
                 self.frame_index = 0
                 if self.action == 1:
                     self.action = 0
+                if health == 0:
+                    if self.action == 2:
+                        self.frame_index = 5
     
     def update_action(self, new_action):
         if new_action != self.action:
@@ -192,6 +195,7 @@ class Player(pygame.sprite.Sprite):
                     channel.play(hurt_sound)
                 health = max(0, health - 1)
                 enemies.remove(enemy)
+                
     
     def draw_hitbox(self):
         pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 2)
@@ -396,7 +400,7 @@ while run:
             score_text = font.render(f"score: {score}", True, (255, 255, 255))
             screen.blit(score_text, (1000, 30))
             if health == 0:
-                screen.fill((0, 0, 0))
+                player.update_action(2)
                 dead_text = font.render("DEAD", True, (255, 0, 0))
                 restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
                 menu_text = font.render("press \'m\' to back to menu", True, (255, 255, 255))
