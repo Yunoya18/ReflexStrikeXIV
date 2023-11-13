@@ -205,9 +205,10 @@ skill = False
 text = ""
 health = 5
 stamina = 5
-create_mana = True
+create_mana = False
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
+last = 0
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
 pygame.mixer.music.load('sound/test_misc.mp3')
@@ -245,7 +246,9 @@ while run:
             skill = False
             stamina = 0
             text = ""
+            create_mana = True
             current_mana = mana(mana_x, 0)
+            last = pygame.time.get_ticks()
         if text == check_word:
             magic_group.add(player.create_magic_missle())
             magic_missle.sfx()
@@ -300,6 +303,11 @@ while run:
                 stamina = min(5, stamina + 1)
                 create_mana = False
                 last = pygame.time.get_ticks()
+            now = pygame.time.get_ticks()
+            if now - last >= 8000: #8 sec
+                last = now
+                mana_x = random.randrange(0, 1100)
+                current_mana = mana(mana_x, 0)
         else:
             now = pygame.time.get_ticks()
             if now - last >= 3000: #delay 3 sec
@@ -321,7 +329,7 @@ while run:
             screen.blit(current_mana.image, current_mana.rect)
 
         #enemy
-        if 23 < random.randint(0, 500) < 25:
+        if 20 < random.randint(0, 500) < 25:
             new_enemy = AnimatedEnemy()
             animated_enemies.append(new_enemy)
         for enemy in animated_enemies:
