@@ -255,7 +255,10 @@ while run:
         screen.blit(highscore_text, highscore_text.get_rect(center=(600, 450)))
         if skill:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == pygame.K_RETURN:
+                    skill = False
+                    stamina = 0
+                elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
                     text += event.unicode
@@ -278,6 +281,8 @@ while run:
                     score = 0
                     animated_enemies.clear()
                     is_paused = False
+                    stamina = 5
+                    health = 5
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
