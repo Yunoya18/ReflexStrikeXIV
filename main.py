@@ -321,19 +321,18 @@ while run:
             screen.blit(current_mana.image, current_mana.rect)
 
         #enemy
-        if 20 < random.randint(0, 100) < 25:
+        if 23 < random.randint(0, 500) < 25:
             new_enemy = AnimatedEnemy()
             animated_enemies.append(new_enemy)
         for enemy in animated_enemies:
             enemy.move()
             enemy.update_animation()
             if enemy.rect.right < 0:
-                enemy.play_death_sound()
                 animated_enemies.remove(enemy)
 
         for enemy in animated_enemies:
             enemy.draw()
-            enemy.draw_hitbox()
+            
         score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (screen_width - 200, 10))
     pygame.display.update()
