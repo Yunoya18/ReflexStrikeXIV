@@ -193,7 +193,7 @@ create_mana = True
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
-font = pygame.font.Font('asset/HP/Coiny.ttf', 36)
+font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
 
 # enemy
