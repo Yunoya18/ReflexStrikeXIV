@@ -34,10 +34,11 @@ COLS = 150
 TILE_SIZE = 700 // ROWS
 #load images
 forestbg_img = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
+ground = pygame.image.load('AssetsBG/ground.png').convert_alpha()
 def draw_bg():
     screen.fill(BG)
-    width = forestbg_img.get_width()
     screen.blit(forestbg_img, (0, 0))
+    screen.blit(ground, (0, 600))
 
 #projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -143,8 +144,13 @@ class Player(pygame.sprite.Sprite):
             dy = 600 - self.rect.bottom
             self.in_air = False
         
+        if self.char_type == 'player':
+            if self.rect.left + dx < 0 or self.rect.right + dx > 1200:
+                dx = 0
+        
         self.rect.x += dx
         self.rect.y += dy
+
     
     def update_animation(self):
         ANIMATION_COOLDOWN = 100
