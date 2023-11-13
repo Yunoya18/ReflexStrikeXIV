@@ -326,6 +326,7 @@ while run:
 
         if health == 0:
                 dead = True
+                player.speed = 0
                 player.update_action(2)
                 dead_text = font.render("DEAD", True, (255, 0, 0))
                 restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
