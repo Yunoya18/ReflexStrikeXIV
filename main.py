@@ -173,6 +173,8 @@ class mana(pygame.sprite.Sprite):
 
 
 pygame.display.set_caption("SpellStrikeXIV")
+icon = pygame.image.load('asset/HP/big_mana_2.png')
+pygame.display.set_icon(icon)
 run = True
 bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 bg_width = bg.get_width()
@@ -188,6 +190,8 @@ current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
+pygame.mixer.music.load('sound/test_misc.mp3')
+pygame.mixer.music.play(-1)
 
 # enemy
 animated_enemies = []
@@ -249,7 +253,7 @@ while run:
             print(check_word)
 
     if is_paused:
-        paused_text = font.render(":)", False, (255, 255, 255))
+        paused_text = font.render(":(", False, (255, 255, 255))
         screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
     else:
@@ -297,6 +301,6 @@ while run:
             enemy.draw_hitbox()
         score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (screen_width - 200, 10))
-        pygame.display.update()
+    pygame.display.update()
 
 pygame.quit()
