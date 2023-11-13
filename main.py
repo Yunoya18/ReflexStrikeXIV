@@ -128,7 +128,7 @@ class Player(pygame.sprite.Sprite):
         
         #Jump
         if self.jump == True and self.in_air == False:
-            self.vel_y = -11
+            self.vel_y = -15
             self.jump = False
             self.in_air = True
 
