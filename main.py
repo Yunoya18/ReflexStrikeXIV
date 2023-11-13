@@ -243,6 +243,7 @@ start_button = button.Button(400, start_img, 0.2)
 exit_button = button.Button(800, exit_img, 0.2)
 logo = pygame.transform.scale(pygame.image.load('asset/HP/logo_2.png').convert_alpha(), (300, 300))
 start_game = False
+dead = False
 
 # enemy
 animated_enemies = []
@@ -299,6 +300,7 @@ while run:
                     stamina = 5
                     health = 5
                     player = Player('player', 200, 200, 3, 5)
+                    dead = False
                 if event.key == pygame.K_m and (is_paused or health == 0):
                     score = 0
                     animated_enemies.clear()
@@ -307,6 +309,7 @@ while run:
                     health = 5
                     player = Player('player', 200, 200, 3, 5)
                     start_game = False
+                    dead = False
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -382,17 +385,18 @@ while run:
                 screen.blit(current_mana.image, current_mana.rect)
 
                 #enemy
-            if 20 < random.randint(0, 500) < 25:
-                new_enemy = AnimatedEnemy()
-                animated_enemies.append(new_enemy)
-            for enemy in animated_enemies:
-                enemy.move()
-                enemy.update_animation()
-                if enemy.rect.right < 0:
-                    animated_enemies.remove(enemy)
-            for enemy in animated_enemies:
-                enemy.draw()
-            
+            if not dead:
+                if 20 < random.randint(0, 500) < 25:
+                    new_enemy = AnimatedEnemy()
+                    animated_enemies.append(new_enemy)
+                for enemy in animated_enemies:
+                    enemy.move()
+                    enemy.update_animation()
+                    if enemy.rect.right < 0:
+                        animated_enemies.remove(enemy)
+                for enemy in animated_enemies:
+                    enemy.draw()
+
             if score > high_score:
                 high_score = score
                 with open('score.txt', 'w') as file:
@@ -400,6 +404,7 @@ while run:
             score_text = font.render(f"score: {score}", True, (255, 255, 255))
             screen.blit(score_text, (1000, 30))
             if health == 0:
+                dead = True
                 player.update_action(2)
                 dead_text = font.render("DEAD", True, (255, 0, 0))
                 restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
