@@ -1,17 +1,14 @@
-import pygame, math, random, urllib.request, os
+import pygame, math, random, urllib.request, os, sys
 
 #from pygame.sprite import _Group
 from enemyextract import AnimatedEnemy
 from HP import Status
 import button
-import csv
 pygame.init()
 screen = pygame.display.set_mode((1200, 700))
 #define player action variables
 moving_left = False
 moving_right = False
-screen_width = 1200
-screen_height = 700
 clock = pygame.time.Clock()
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = urllib.request.urlopen(word_site)
@@ -227,7 +224,7 @@ skill = False
 text = ""
 health = 5
 stamina = 5
-mana_x = random.randrange(0, 1100)
+mana_x = random.randrange(100, 1100)
 current_mana = mana(mana_x, 0)
 last = 0
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
@@ -256,13 +253,14 @@ while run:
             run = False
         if not start_game:
             screen.fill((56, 118, 191))
+            screen.blit(logo, logo.get_rect(center=(600, 200)))
+            highscore_text = font.render("Your highscore : " + str(high_score), True, (0, 0, 0))
+            screen.blit(highscore_text, highscore_text.get_rect(center=(600, 450)))
             if exit_button.draw() == True:
                 pygame.quit()
-            if start_button.draw() == True:
+                sys.exit()
+            elif start_button.draw() == True:
                 start_game = True
-        screen.blit(logo, logo.get_rect(center=(600, 200)))
-        highscore_text = font.render("Your highscore : " + str(high_score), True, (0, 0, 0))
-        screen.blit(highscore_text, highscore_text.get_rect(center=(600, 450)))
         if skill:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -290,12 +288,15 @@ while run:
                     check_word = WORDS[random.randint(0, 10000)]
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
-                if event.key == pygame.K_r and is_paused:
+                if event.key == pygame.K_r and (is_paused or health == 0):
                     score = 0
                     animated_enemies.clear()
                     is_paused = False
                     stamina = 5
                     health = 5
+                    player = Player('player', 200, 200, 3, 5)
+                if event.key == pygame.K_m and (is_paused or health == 0):
+                    start_game = False
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -335,30 +336,32 @@ while run:
             paused_text = font.render("PAUSED", True, (255, 0, 0))
             restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
             resume_text = font.render("press \'p\' to resume", True, (255, 255, 255))
+            menu_text = font.render("press \'m\' to back to menu", True, (255, 255, 255))
             screen.blit(paused_text, paused_text.get_rect(center=(600, 300)))
-            screen.blit(resume_text, resume_text.get_rect(center=(600, 370)))
-            screen.blit(restart_text, restart_text.get_rect(center=(600, 440)))
+            screen.blit(resume_text, resume_text.get_rect(center=(600, 350)))
+            screen.blit(restart_text, restart_text.get_rect(center=(600, 400)))
+            screen.blit(menu_text, menu_text.get_rect(center=(600, 450)))
 
         else:
             current_mana.update()
             if current_mana.rect.collidepoint(player.rect.center):
-                mana_x = random.randrange(0, 1100)
+                mana_x = random.randrange(100, 1100)
                 current_mana = mana(mana_x, 0)
                 stamina = min(5, stamina + 1)
                 last = pygame.time.get_ticks()
             now = pygame.time.get_ticks()
             if now - last >= 8000: #8 sec
                 last = now
-                mana_x = random.randrange(0, 1100)
+                mana_x = random.randrange(100, 1100)
                 current_mana = mana(mana_x, 0)
 
-            #update
+                #update
             magic_group.update()
             player.hit_enemies(animated_enemies)
-            #player.draw_hitbox()
+                #player.draw_hitbox()
             Status().update(health, int(stamina))
 
-            #draw
+                #draw
             magic_group.draw(screen)
             if skill:
                 checkword_surface = font.render(check_word, True, (255, 255, 255))
@@ -368,7 +371,7 @@ while run:
             if stamina < 5 and create_mana:
                 screen.blit(current_mana.image, current_mana.rect)
 
-            #enemy
+                #enemy
             if 20 < random.randint(0, 500) < 25:
                 new_enemy = AnimatedEnemy()
                 animated_enemies.append(new_enemy)
@@ -379,13 +382,24 @@ while run:
                     animated_enemies.remove(enemy)
             for enemy in animated_enemies:
                 enemy.draw()
-        
+            
             if score > high_score:
                 high_score = score
                 with open('score.txt', 'w') as file:
                     file.write(str(high_score))
             score_text = font.render(f"score: {score}", True, (255, 255, 255))
-            screen.blit(score_text, (screen_width - 200, 10))
+            screen.blit(score_text, (1000, 10))
+            if health == 0:
+                screen.fill((0, 0, 0))
+                dead_text = font.render("DEAD", True, (255, 0, 0))
+                restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
+                menu_text = font.render("press \'m\' to back to menu", True, (255, 255, 255))
+                highest_score = font.render("Your highscore : " + str(high_score), True, (255, 255, 255))
+                screen.blit(dead_text, dead_text.get_rect(center=(600, 250)))
+                screen.blit(score_text, score_text.get_rect(center=(600, 300)))
+                screen.blit(highest_score, highest_score.get_rect(center=(600, 350)))
+                screen.blit(restart_text, restart_text.get_rect(center=(600, 400)))
+                screen.blit(menu_text, menu_text.get_rect(center=(600, 450)))
     pygame.display.update()
 
 pygame.quit()
