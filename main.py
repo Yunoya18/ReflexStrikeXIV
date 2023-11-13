@@ -169,6 +169,14 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.rect
+    
+    def hit_enemies(self, enemies):
+        # Check for collision with enemies
+        global health
+        for enemy in enemies:
+            if self.rect.colliderect(enemy.rect):
+                health -= 1
+                enemies.remove(enemy)
 
 player = Player('player', 200, 200, 3, 5)
 
@@ -203,8 +211,9 @@ current_mana = mana(mana_x, 0)
 last = 0
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
-pygame.mixer.music.load('sound/test_misc.mp3')
+pygame.mixer.music.load('sound/gameost01.mp3')
 pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.7)
 # menu button
 start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
 exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
@@ -312,6 +321,7 @@ while run:
 
             #update
             magic_group.update()
+            player.hit_enemies(animated_enemies)
             Status().update(health, stamina)
 
             #draw
@@ -333,9 +343,9 @@ while run:
                 enemy.update_animation()
                 if enemy.rect.right < 0:
                     animated_enemies.remove(enemy)
-
             for enemy in animated_enemies:
                 enemy.draw()
+        
             if score > high_score:
                 high_score = score
                 with open('score.txt', 'w') as file:
