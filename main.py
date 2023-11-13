@@ -1,10 +1,10 @@
-from typing import Any
 import pygame, math, random, urllib.request, os
 
 #from pygame.sprite import _Group
 from enemyextract import AnimatedEnemy
 from level101 import *
 from HP import Status
+import button
 import csv
 pygame.init()
 screen = pygame.display.set_mode((1200, 700))
@@ -205,6 +205,12 @@ font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
 pygame.mixer.music.load('sound/test_misc.mp3')
 pygame.mixer.music.play(-1)
+# menu button
+start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
+exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
+start_button = button.Button(250, 300, start_img, 0.2)
+exit_button = button.Button(700, 300, exit_img, 0.2)
+start_game = False
 
 # enemy
 animated_enemies = []
@@ -214,33 +220,15 @@ magic_group = pygame.sprite.Group()
 
 
 while run:
-    clock.tick(FPS)
-    draw_bg()
-    player.update_animation()
-    player.draw()
-    now = pygame.time.get_ticks()
-
-    if skill:
-        if now - skill_start > stamina * 3000: #มานาก้อนละ 3 วิ
-            skill = False
-            stamina = 0
-            text = ""
-            create_mana = True
-            current_mana = mana(mana_x, 0)
-            last = pygame.time.get_ticks()
-        if text == check_word:
-            magic_group.add(player.create_magic_missle())
-            magic_missle.sfx()
-            check_word = WORDS[random.randint(0, 10000)]
-            text = ""
-
-    if moving_left or moving_right:
-        player.update_action(0)
-    player.move(moving_left, moving_right)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if not start_game:
+            screen.fill((140, 171, 255))
+            if exit_button.draw() == True:
+                pygame.quit()
+            if start_button.draw() == True:
+                start_game = True
         if skill:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
@@ -269,56 +257,82 @@ while run:
                 if event.key == pygame.K_RIGHT:
                     moving_right = False
 
-    if is_paused:
-        screen.fill((0, 0, 0))
-        paused_text = font.render(":(", False, (255, 255, 255))
-        screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
-
-    else:
-        current_mana.update()
-        if current_mana.rect.collidepoint(player.rect.center):
-                mana_x = random.randrange(0, 1100)
-                current_mana = mana(mana_x, 0)
-                stamina = min(5, stamina + 1)
-                last = pygame.time.get_ticks()
+    if start_game:
+        clock.tick(FPS)
+        draw_bg()
+        player.update_animation()
+        player.draw()
         now = pygame.time.get_ticks()
-        if now - last >= 8000: #8 sec
-                last = now
-                mana_x = random.randrange(0, 1100)
-                current_mana = mana(mana_x, 0)
 
-        #update
-        magic_group.update()
-        Status().update(health, stamina)
-
-        #draw
-        magic_group.draw(screen)
         if skill:
-            checkword_surface = font.render(check_word, True, (255, 255, 255))
-            screen.blit(checkword_surface, checkword_surface.get_rect(center=(600, 50)))
-            text_surface = font.render(text, True, (255, 255, 255))
-            screen.blit(text_surface, text_surface.get_rect(center=(600, 100)))
-        if stamina < 5 and create_mana:
-            screen.blit(current_mana.image, current_mana.rect)
+            if now - skill_start > stamina * 3000: #มานาก้อนละ 3 วิ
+                skill = False
+                stamina = 0
+                text = ""
+                create_mana = True
+                current_mana = mana(mana_x, 0)
+                last = pygame.time.get_ticks()
+            if text == check_word:
+                magic_group.add(player.create_magic_missle())
+                magic_missle.sfx()
+                check_word = WORDS[random.randint(0, 10000)]
+                text = ""
 
-        #enemy
-        if 20 < random.randint(0, 500) < 25:
-            new_enemy = AnimatedEnemy()
-            animated_enemies.append(new_enemy)
-        for enemy in animated_enemies:
-            enemy.move()
-            enemy.update_animation()
-            if enemy.rect.right < 0:
-                animated_enemies.remove(enemy)
+        if moving_left or moving_right:
+            player.update_action(0)
+        player.move(moving_left, moving_right)
 
-        for enemy in animated_enemies:
-            enemy.draw()
-        if score > high_score:
-            high_score = score
-            with open('score.txt', 'w') as file:
-                file.write(str(high_score))
-        score_text = font.render(f"score: {score}", True, (255, 255, 255))
-        screen.blit(score_text, (screen_width - 200, 10))
+
+        if is_paused:
+            screen.fill((0, 0, 0))
+            paused_text = font.render(":(", False, (255, 255, 255))
+            screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
+
+        else:
+            current_mana.update()
+            if current_mana.rect.collidepoint(player.rect.center):
+                    mana_x = random.randrange(0, 1100)
+                    current_mana = mana(mana_x, 0)
+                    stamina = min(5, stamina + 1)
+                    last = pygame.time.get_ticks()
+            now = pygame.time.get_ticks()
+            if now - last >= 8000: #8 sec
+                    last = now
+                    mana_x = random.randrange(0, 1100)
+                    current_mana = mana(mana_x, 0)
+
+            #update
+            magic_group.update()
+            Status().update(health, stamina)
+
+            #draw
+            magic_group.draw(screen)
+            if skill:
+                checkword_surface = font.render(check_word, True, (255, 255, 255))
+                screen.blit(checkword_surface, checkword_surface.get_rect(center=(600, 50)))
+                text_surface = font.render(text, True, (255, 255, 255))
+                screen.blit(text_surface, text_surface.get_rect(center=(600, 100)))
+            if stamina < 5 and create_mana:
+                screen.blit(current_mana.image, current_mana.rect)
+
+            #enemy
+            if 20 < random.randint(0, 500) < 25:
+                new_enemy = AnimatedEnemy()
+                animated_enemies.append(new_enemy)
+            for enemy in animated_enemies:
+                enemy.move()
+                enemy.update_animation()
+                if enemy.rect.right < 0:
+                    animated_enemies.remove(enemy)
+
+            for enemy in animated_enemies:
+                enemy.draw()
+            if score > high_score:
+                high_score = score
+                with open('score.txt', 'w') as file:
+                    file.write(str(high_score))
+            score_text = font.render(f"score: {score}", True, (255, 255, 255))
+            screen.blit(score_text, (screen_width - 200, 10))
     pygame.display.update()
 
 pygame.quit()
