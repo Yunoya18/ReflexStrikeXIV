@@ -291,6 +291,7 @@ while run:
                     moving_right = False
 
     if is_paused:
+        screen.fill((0, 0, 0))
         paused_text = font.render(":(", False, (255, 255, 255))
         screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
