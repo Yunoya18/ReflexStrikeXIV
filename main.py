@@ -239,7 +239,6 @@ skill = False
 text = ""
 health = 5
 stamina = 5
-create_mana = False
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
 last = 0
@@ -333,24 +332,17 @@ while run:
         screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
     else:
-        if create_mana:
-            current_mana.update()
-            if current_mana.rect.collidepoint(player.rect.center):
+        current_mana.update()
+        if current_mana.rect.collidepoint(player.rect.center):
                 mana_x = random.randrange(0, 1100)
                 current_mana = mana(mana_x, 0)
                 stamina = min(5, stamina + 1)
-                create_mana = False
                 last = pygame.time.get_ticks()
-            now = pygame.time.get_ticks()
-            if now - last >= 8000: #8 sec
+        now = pygame.time.get_ticks()
+        if now - last >= 8000: #8 sec
                 last = now
                 mana_x = random.randrange(0, 1100)
                 current_mana = mana(mana_x, 0)
-        else:
-            now = pygame.time.get_ticks()
-            if now - last >= 3000: #delay 3 sec
-                last = now
-                create_mana = True
 
         #update
         magic_group.update()
