@@ -1,5 +1,5 @@
 from typing import Any
-import pygame, math, random, urllib.request
+import pygame, math, random, urllib.request, os
 
 #from pygame.sprite import _Group
 from enemyextract import AnimatedEnemy
@@ -17,6 +17,11 @@ response = urllib.request.urlopen(word_site)
 txt = response.read().decode()
 #score
 score = 0
+if os.path.exists('score.txt'):
+    with open('score.txt', 'r') as file:
+        high_score = int(file.read())
+else:    
+    high_score = 0
 
 
 WORDS = txt.splitlines()
@@ -340,7 +345,10 @@ while run:
 
         for enemy in animated_enemies:
             enemy.draw()
-            
+        if score > high_score:
+            high_score = score
+            with open('score.txt', 'w') as file:
+                file.write(str(high_score))
         score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (screen_width - 200, 10))
     pygame.display.update()
