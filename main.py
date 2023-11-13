@@ -195,6 +195,8 @@ current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
+pygame.mixer.music.load('sound/test_misc.mp3')
+pygame.mixer.music.play(-1)
 
 # enemy
 animated_enemies = []
