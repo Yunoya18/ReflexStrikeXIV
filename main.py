@@ -2,7 +2,6 @@ import pygame, math, random, urllib.request, os
 
 #from pygame.sprite import _Group
 from enemyextract import AnimatedEnemy
-from level101 import *
 from HP import Status
 import button
 import csv
@@ -11,6 +10,8 @@ screen = pygame.display.set_mode((1200, 700))
 #define player action variables
 moving_left = False
 moving_right = False
+screen_width = 1200
+screen_height = 700
 clock = pygame.time.Clock()
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = urllib.request.urlopen(word_site)
@@ -193,7 +194,7 @@ class Player(pygame.sprite.Sprite):
     def draw_hitbox(self):
         pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 2)
 
-player = Player('player', 200, 600, 3, 5)
+player = Player('player', 200, 200, 3, 5)
 
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
