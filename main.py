@@ -186,7 +186,7 @@ class mana(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.img, (self.img.get_width(), self.img.get_height()))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 2
+        self.speed = 3
     
     def update(self):
         if self.rect.y + self.speed < 550:
@@ -204,11 +204,10 @@ scroll = 0
 skill = False
 text = ""
 health = 5
-stamina = 0
+stamina = 5
 create_mana = True
 mana_x = random.randrange(0, 1100)
 current_mana = mana(mana_x, 0)
-check_word = WORDS[random.randint(0, 10000)]
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
 pygame.mixer.music.load('sound/test_misc.mp3')
@@ -242,9 +241,15 @@ while run:
     now = pygame.time.get_ticks()
 
     if skill:
-        if now - skill_start > stamina * 2000:
+        if now - skill_start > stamina * 3000: #มานาก้อนละ 3 วิ
             skill = False
             stamina = 0
+            text = ""
+            current_mana = mana(mana_x, 0)
+        if text == check_word:
+            magic_group.add(player.create_magic_missle())
+            magic_missle.sfx()
+            check_word = WORDS[random.randint(0, 10000)]
             text = ""
 
     if moving_left or moving_right:
@@ -272,6 +277,7 @@ while run:
                 if event.key == pygame.K_RETURN and stamina > 0 and is_paused == False:
                     skill = True
                     skill_start = pygame.time.get_ticks()
+                    check_word = WORDS[random.randint(0, 10000)]
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
             #keyboard released
@@ -280,12 +286,6 @@ while run:
                     moving_left = False
                 if event.key == pygame.K_RIGHT:
                     moving_right = False
-        if text == check_word:
-            magic_group.add(player.create_magic_missle())
-            magic_missle.sfx()
-            check_word = WORDS[random.randint(0, 10000)]
-            text = ""
-            print(check_word)
 
     if is_paused:
         paused_text = font.render(":(", False, (255, 255, 255))
@@ -302,7 +302,7 @@ while run:
                 last = pygame.time.get_ticks()
         else:
             now = pygame.time.get_ticks()
-            if now - last >= 3000: #delay 5 sec
+            if now - last >= 3000: #delay 3 sec
                 last = now
                 create_mana = True
 
