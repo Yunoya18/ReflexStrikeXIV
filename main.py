@@ -188,6 +188,11 @@ class Player(pygame.sprite.Sprite):
         global health
         for enemy in enemies:
             if self.rect.colliderect(enemy.rect):
+                hurt_sound = pygame.mixer.Sound('sound/hurt.mp3')
+                channel = pygame.mixer.find_channel()
+                if channel:
+                    channel.set_volume(0.5)
+                    channel.play(hurt_sound)
                 health = max(0, health - 1)
                 enemies.remove(enemy)
     
