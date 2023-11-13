@@ -259,6 +259,7 @@ while run:
                     skill = False
                     create_mana = True
                     current_mana = mana(mana_x, 0)
+                    text = ""
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
@@ -355,7 +356,7 @@ while run:
                 screen.blit(checkword_surface, checkword_surface.get_rect(center=(600, 50)))
                 text_surface = font.render(text, True, (255, 255, 255))
                 screen.blit(text_surface, text_surface.get_rect(center=(600, 100)))
-            if stamina < 5:
+            if stamina < 5 and create_mana:
                 screen.blit(current_mana.image, current_mana.rect)
 
             #enemy
