@@ -4,15 +4,52 @@ import pygame, math, random, urllib.request, os, sys
 from enemyextract import AnimatedEnemy
 from HP import Status
 import button
+
 pygame.init()
+#screen setting
 screen = pygame.display.set_mode((1200, 700))
+pygame.display.set_caption("SpellStrikeXIV")
+icon = pygame.image.load('asset/HP/big_mana_2.png')
+pygame.display.set_icon(icon)
+pygame.mixer.music.load('sound/gameost01.mp3')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 #define player action variables
 moving_left = False
 moving_right = False
 clock = pygame.time.Clock()
+#random word
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = urllib.request.urlopen(word_site)
 txt = response.read().decode()
+
+# enemy
+animated_enemies = []
+
+# to start
+magic_group = pygame.sprite.Group()
+run = True
+bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
+bg_width = bg.get_width()
+tiles = math.ceil(1200 / bg_width) + 1
+scroll = 0
+skill = False
+text = ""
+health = 5
+stamina = 5
+mana_x = random.randrange(100, 1100)
+last = 0
+font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
+is_paused = False
+# menu button
+start_img = pygame.transform.scale(pygame.image.load('menu/start.png').convert_alpha(), (1000, 1000))
+exit_img = pygame.transform.scale(pygame.image.load('menu/exit.png').convert_alpha(), (1000, 1000))
+start_button = button.Button(400, start_img, 0.2)
+exit_button = button.Button(800, exit_img, 0.2)
+logo = pygame.transform.scale(pygame.image.load('asset/HP/logo_2.png').convert_alpha(), (300, 300))
+start_game = False
+dead = False
+
 #score
 score = 0
 if os.path.exists('score.txt'):
@@ -20,7 +57,6 @@ if os.path.exists('score.txt'):
         high_score = int(file.read())
 else:    
     high_score = 0
-
 
 WORDS = txt.splitlines()
 FPS = 60
@@ -80,7 +116,7 @@ class magic_missle(pygame.sprite.Sprite):
                 self.kill()
                 break
 
-
+#player
 class Player(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
@@ -200,8 +236,10 @@ class Player(pygame.sprite.Sprite):
     def draw_hitbox(self):
         pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 2)
 
+#create player
 player = Player('player', 200, 200, 3, 5)
 
+#mana
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -215,43 +253,10 @@ class mana(pygame.sprite.Sprite):
         if self.rect.y + self.speed < 550:
             self.rect.y += self.speed
 
-
-pygame.display.set_caption("SpellStrikeXIV")
-icon = pygame.image.load('asset/HP/big_mana_2.png')
-pygame.display.set_icon(icon)
-run = True
-bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
-bg_width = bg.get_width()
-tiles = math.ceil(1200 / bg_width) + 1
-scroll = 0
-skill = False
-text = ""
-health = 5
-stamina = 5
-mana_x = random.randrange(100, 1100)
+#create mana
 current_mana = mana(mana_x, 0)
-last = 0
-font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
-is_paused = False
-pygame.mixer.music.load('sound/gameost01.mp3')
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.7)
-# menu button
-start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
-exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
-start_button = button.Button(400, start_img, 0.2)
-exit_button = button.Button(800, exit_img, 0.2)
-logo = pygame.transform.scale(pygame.image.load('asset/HP/logo_2.png').convert_alpha(), (300, 300))
-start_game = False
-dead = False
 
-# enemy
-animated_enemies = []
-
-# to start
-magic_group = pygame.sprite.Group()
-
-
+#run game loop
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -323,23 +328,22 @@ while run:
         player.update_animation()
         player.draw()
         now = pygame.time.get_ticks()
-
         if health == 0:
-                dead = True
-                player.speed = 0
-                player.update_action(2)
-                dead_text = font.render("DEAD", True, (255, 0, 0))
-                restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
-                menu_text = font.render("press \'m\' to back to menu", True, (255, 255, 255))
-                highest_score = font.render("Your highscore : " + str(high_score), True, (255, 255, 255))
-                screen.blit(dead_text, dead_text.get_rect(center=(600, 250)))
-                screen.blit(score_text, score_text.get_rect(center=(600, 300)))
-                screen.blit(highest_score, highest_score.get_rect(center=(600, 350)))
-                screen.blit(restart_text, restart_text.get_rect(center=(600, 400)))
-                screen.blit(menu_text, menu_text.get_rect(center=(600, 450)))
-        
-        if not dead:
+            dead = True
+            skill = False
+            player.speed = 0
+            player.update_action(2)
+            dead_text = font.render("DEAD", True, (255, 0, 0))
+            restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
+            menu_text = font.render("press \'m\' to back to menu", True, (255, 255, 255))
+            highest_score = font.render("Your highscore : " + str(high_score), True, (255, 255, 255))
+            screen.blit(dead_text, dead_text.get_rect(center=(600, 250)))
+            screen.blit(score_text, score_text.get_rect(center=(600, 300)))
+            screen.blit(highest_score, highest_score.get_rect(center=(600, 350)))
+            screen.blit(restart_text, restart_text.get_rect(center=(600, 400)))
+            screen.blit(menu_text, menu_text.get_rect(center=(600, 450)))
 
+        if not dead:
             if skill:
                 if now - skill_start > 3000: #มานาก้อนละ 3 วิ
                     stamina -= 1
@@ -355,7 +359,6 @@ while run:
                     check_word = WORDS[random.randint(0, 10000)]
                     text = ""
                     player.update_action(1)
-
             if moving_left or moving_right:
                 player.update_action(0)
             player.move(moving_left, moving_right)
@@ -370,7 +373,6 @@ while run:
                 screen.blit(resume_text, resume_text.get_rect(center=(600, 350)))
                 screen.blit(restart_text, restart_text.get_rect(center=(600, 400)))
                 screen.blit(menu_text, menu_text.get_rect(center=(600, 450)))
-
             else:
                 current_mana.update()
                 if current_mana.rect.collidepoint(player.rect.center):
@@ -384,13 +386,12 @@ while run:
                     mana_x = random.randrange(100, 1100)
                     current_mana = mana(mana_x, 0)
 
-                    #update
+                #update
                 magic_group.update()
                 player.hit_enemies(animated_enemies)
-                    #player.draw_hitbox()
                 Status().update(health, int(stamina))
 
-                    #draw
+                #draw
                 magic_group.draw(screen)
                 if skill:
                     checkword_surface = font.render(check_word, True, (255, 255, 255))
@@ -400,7 +401,7 @@ while run:
                 if stamina < 5 and create_mana:
                     screen.blit(current_mana.image, current_mana.rect)
 
-                    #enemy
+                #enemy
                 if 20 < random.randint(0, 500) < 25:
                     new_enemy = AnimatedEnemy()
                     animated_enemies.append(new_enemy)

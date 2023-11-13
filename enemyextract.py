@@ -28,7 +28,7 @@ class AnimatedEnemy:
         self.current_frame_index = 0
 
     def move(self):
-        self.rect.x -= 2
+        self.rect.x -= 1
         self.hitbox.x = self.rect.x
 
     def draw(self):
