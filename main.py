@@ -18,6 +18,12 @@ txt = response.read().decode()
 #score
 score = 0
 
+#load images
+#store tiles in a list
+img_list = []
+for x in range(TILE_TYPES):
+    img = pygame.image.load(f'img/TILE/{x}')
+
 WORDS = txt.splitlines()
 FPS = 60
 BG = (0, 0, 0)
@@ -169,6 +175,11 @@ class world():
     
     def process_dataa(self, data):
         #iterate through each value in level data file
+        for y, row in enumerate(data):
+            for x, tile in enumeratee(row):
+                if tile >= 0:
+
+
 class toggle_skill(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
