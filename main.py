@@ -234,6 +234,7 @@ start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_a
 exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
 start_button = button.Button(400, start_img, 0.2)
 exit_button = button.Button(800, exit_img, 0.2)
+logo = pygame.transform.scale(pygame.image.load('asset/HP/logo_2.png').convert_alpha(), (300, 300))
 start_game = False
 
 # enemy
@@ -248,11 +249,12 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if not start_game:
-            screen.fill((140, 171, 255))
+            screen.fill((56, 118, 191))
             if exit_button.draw() == True:
                 pygame.quit()
             if start_button.draw() == True:
                 start_game = True
+        screen.blit(logo, logo.get_rect(center=(600, 200)))
         highscore_text = font.render("Your highscore : " + str(high_score), True, (0, 0, 0))
         screen.blit(highscore_text, highscore_text.get_rect(center=(600, 450)))
         if skill:
@@ -317,7 +319,6 @@ while run:
                 check_word = WORDS[random.randint(0, 10000)]
                 text = ""
                 player.update_action(1)
-                
 
         if moving_left or moving_right:
             player.update_action(0)
