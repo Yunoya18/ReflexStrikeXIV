@@ -158,13 +158,6 @@ class Player(pygame.sprite.Sprite):
 player = Player('player', 200, 200, 3, 5)
 
 
-class toggle_skill(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.font = pygame.font.Font(None, 32)
-        self.color = pygame.Color("lightskyblue3")
-        self.box = pygame.Rect(500, 50, 200, 50)
-
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -180,8 +173,6 @@ class mana(pygame.sprite.Sprite):
 
 
 pygame.display.set_caption("SpellStrikeXIV")
-icon = pygame.image.load('asset/HP/big_mana_2.png')
-pygame.display.set_icon(icon)
 run = True
 bg = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 bg_width = bg.get_width()
@@ -197,8 +188,6 @@ current_mana = mana(mana_x, 0)
 check_word = WORDS[random.randint(0, 10000)]
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
-pygame.mixer.music.load('sound/test_misc.mp3')
-pygame.mixer.music.play(-1)
 
 # enemy
 animated_enemies = []
@@ -258,9 +247,9 @@ while run:
             check_word = WORDS[random.randint(0, 10000)]
             text = ""
             print(check_word)
+
     if is_paused:
-        screen.fill((0, 0, 0))
-        paused_text = font.render(":(", False, (255, 255, 255))
+        paused_text = font.render(":)", False, (255, 255, 255))
         screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
     else:
@@ -274,7 +263,7 @@ while run:
                 last = pygame.time.get_ticks()
         else:
             now = pygame.time.get_ticks()
-            if now - last >= 5000: #delay 5 sec
+            if now - last >= 3000: #delay 5 sec
                 last = now
                 create_mana = True
 
@@ -285,9 +274,10 @@ while run:
         #draw
         magic_group.draw(screen)
         if skill:
-            pygame.draw.rect(screen, toggle_skill().color, toggle_skill().box)
-            text_surface = toggle_skill().font.render(text, True, (255, 255, 255))
-            screen.blit(text_surface, (toggle_skill().box.x, toggle_skill().box.centery))
+            checkword_surface = font.render(check_word, True, (255, 255, 255))
+            screen.blit(checkword_surface, checkword_surface.get_rect(center=(600, 50)))
+            text_surface = font.render(text, True, (255, 255, 255))
+            screen.blit(text_surface, text_surface.get_rect(center=(600, 100)))
         if stamina < 5 and create_mana:
             screen.blit(current_mana.image, current_mana.rect)
 
@@ -307,6 +297,6 @@ while run:
             enemy.draw_hitbox()
         score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (screen_width - 200, 10))
-    pygame.display.update()
+        pygame.display.update()
 
 pygame.quit()
