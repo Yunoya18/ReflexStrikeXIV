@@ -5,6 +5,7 @@ import pygame, math, random, urllib.request
 from enemyextract import AnimatedEnemy
 from level101 import *
 from HP import Status
+import csv
 pygame.init()
 screen = pygame.display.set_mode((1200, 700))
 #define player action variables
@@ -22,6 +23,11 @@ FPS = 60
 BG = (0, 0, 0)
 RED = (255, 0, 0)
 GRAVITY = 0.75
+ROWS = 16
+COLS = 150
+TILE_SIZE = 700 // ROWS
+TILES_TYPE = 2
+level = 0
 def draw_bg():
     screen.fill(BG)
     pygame.draw.line(screen, RED, (0, 600), (1200, 600))
@@ -157,7 +163,12 @@ class Player(pygame.sprite.Sprite):
 
 player = Player('player', 200, 200, 3, 5)
 
-
+class world():
+    def __init__(self):
+        self.obstacle_list = []
+    
+    def process_dataa(self, data):
+        #iterate through each value in level data file
 class toggle_skill(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -205,6 +216,20 @@ animated_enemies = []
 
 # to start
 magic_group = pygame.sprite.Group()
+
+#create empty tile list
+world_data = []
+for row in range(ROWS):
+    r = [-1] * COLS
+    world_data.append(r)
+#load in level data and create world
+with open(f'level{level}_data.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',')
+    for x, row in enumerate(reader):
+        for y, tile in enumerate(row):
+            world_data[x][y] = int(tile)
+
+
 
 while run:
     clock.tick(FPS)
