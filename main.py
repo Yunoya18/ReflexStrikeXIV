@@ -34,19 +34,12 @@ COLS = 150
 TILE_SIZE = 700 // ROWS
 TILES_TYPE = 3
 level = 0
-bg_scroll = 0
 #load images
 forestbg_img = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
-#store tiles in a list
-img_list = []
-for x in range(TILES_TYPE):
-    img = pygame.image.load(f'tile/{x}.png')
-    img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
-    img_list.append(img)
 def draw_bg():
     screen.fill(BG)
     width = forestbg_img.get_width()
-    screen.blit(forestbg_img, ((x * width) - bg_scroll * 0.5, 0))
+    screen.blit(forestbg_img, (0, 0))
 
 #projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -144,24 +137,7 @@ class Player(pygame.sprite.Sprite):
         self.vel_y += GRAVITY
         if self.vel_y > 10:
             self.vel_y 
-        dy += self.vel_y
-
-        #check collision floor
-        for tile in world.obstacle_list:
-                #check collision in the x direction
-                if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
-                    dx = 0
-                #check for collision in the y direction
-                if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                    #check if below the ground, i.e. jumping
-                    if self.vel_y < 0:
-                        self.vel_y = 0
-                        dy = tile[1].bottom - self.rect.top
-                    #check if above the ground, i.e. falling
-                    elif self.vel_y >= 0:
-                        self.vel_y = 0
-                        self.in_air = False
-                        dy = tile[1].top - self.rect.bottom
+        dy += self.vel_y   
     
     def update_animation(self):
         ANIMATION_COOLDOWN = 100
@@ -188,30 +164,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.rect
 
-
-
-class World():
-    def __init__(self):
-        self.obstacle_list = []
-    
-    def process_data(self, data):
-        #iterate through each value in level data file
-        for y, row in enumerate(data):
-            for x, tile in enumerate(row):
-                if tile >= 0:
-                    img = img_list[tile]
-                    img_rect = img.get_rect()
-                    img_rect.x = x * TILE_SIZE
-                    img_rect.y = y * TILE_SIZE
-                    tile_data = (img, img_rect)
-                    if tile >= 0 and tile <= 1:
-                        self.obstacle_list.append(tile_data)
-                    elif tile == 2:
-                        player = Player('player', x * TILE_SIZE, y * TILE_SIZE, 3, 5)
-        return player 
-    def draw(self):
-        for tile in self.obstacle_list:
-            screen.blit(tile[0], tile[1])
+player = Player('player', 200, 200, 3, 5)
 
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -244,9 +197,8 @@ current_mana = mana(mana_x, 0)
 last = 0
 font = pygame.font.Font('asset/HP/Minecraft.ttf', 36)
 is_paused = False
-pygame.mixer.music.load('sound/gameost01.mp3')
+pygame.mixer.music.load('sound/test_misc.mp3')
 pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.5)
 
 # enemy
 animated_enemies = []
@@ -254,26 +206,10 @@ animated_enemies = []
 # to start
 magic_group = pygame.sprite.Group()
 
-#create empty tile list
-world_data = []
-for row in range(ROWS):
-    r = [-1] * COLS
-    world_data.append(r)
-#load in level data and create world
-with open(f'level{level}_data.csv', newline='') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    for x, row in enumerate(reader):
-        for y, tile in enumerate(row):
-            world_data[x][y] = int(tile)
-world = World()
-player = world.process_data(world_data)
-
-
 
 while run:
     clock.tick(FPS)
     draw_bg()
-    world.draw()
     player.update_animation()
     player.draw()
     now = pygame.time.get_ticks()
@@ -320,10 +256,6 @@ while run:
                     check_word = WORDS[random.randint(0, 10000)]
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
-                if event.key == pygame.K_r and is_paused:
-                    score = 0
-                    animated_enemies.clear()
-                    is_paused = False
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -333,22 +265,12 @@ while run:
 
     if is_paused:
         screen.fill((0, 0, 0))
-        paused_text = font.render("PAUSED", True, (255, 0, 0))
-        restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
-        resume_text = font.render("press \'p\' to resume", True, (255, 255, 255))
-        screen.blit(paused_text, paused_text.get_rect(center=(600, 300)))
-        screen.blit(resume_text, resume_text.get_rect(center=(600, 370)))
-        screen.blit(restart_text, restart_text.get_rect(center=(600, 440)))
-
+        paused_text = font.render(":(", False, (255, 255, 255))
+        screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
     else:
         current_mana.update()
         if current_mana.rect.collidepoint(player.rect.center):
-                channel = pygame.mixer.find_channel() 
-                mana_sound =  pygame.mixer.Sound('sound/mana_refil.mp3')
-                if channel:
-                    channel.set_volume(0.5)
-                    channel.play(mana_sound)
                 mana_x = random.randrange(0, 1100)
                 current_mana = mana(mana_x, 0)
                 stamina = min(5, stamina + 1)
