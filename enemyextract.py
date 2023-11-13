@@ -23,7 +23,7 @@ class AnimatedEnemy:
         [pygame.image.load(os.path.join('Enemy/images', f'stone_{i}.png')) for i in range(1, 7)]
         ]
         self.rect = pygame.Rect(1200 - 90, 600-90, 90, 90)
-        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, 90, 90)
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, 70, 80)
         self.animation_frames = random.choice(enemy_sets)
         self.current_frame_index = 0
 

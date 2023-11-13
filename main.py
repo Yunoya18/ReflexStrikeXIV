@@ -72,7 +72,7 @@ class magic_missle(pygame.sprite.Sprite):
             # destroy missle if travel to far
             self.kill()
         for enemy in self.enemies:
-            if self.rect.colliderect(enemy.rect):
+            if self.rect.colliderect(enemy.hitbox):
                 # collision with enemy
                 animated_enemies.remove(enemy)
                 enemy.play_death_sound()
@@ -114,6 +114,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.width = self.image.get_width()
         self.height = self.image.get_height()
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, 80, 80)
         
     def move(self, moving_left, moving_right):
         dx = 0
@@ -129,7 +130,7 @@ class Player(pygame.sprite.Sprite):
         
         #Jump
         if self.jump == True and self.in_air == False:
-            self.vel_y = -15
+            self.vel_y = -18
             self.jump = False
             self.in_air = True
 
@@ -150,7 +151,8 @@ class Player(pygame.sprite.Sprite):
         
         self.rect.x += dx
         self.rect.y += dy
-
+        self.hitbox.x = self.rect.x
+        self.hitbox.y = self.rect.y
     
     def update_animation(self):
         ANIMATION_COOLDOWN = 100
@@ -172,7 +174,6 @@ class Player(pygame.sprite.Sprite):
     def draw(self):
         screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
 
-
     def create_magic_missle(self):
         return magic_missle(self.rect.centerx, self.rect.centery, 15, player.direction, animated_enemies)
 
@@ -186,6 +187,9 @@ class Player(pygame.sprite.Sprite):
             if self.rect.colliderect(enemy.rect):
                 health = max(0, health - 1)
                 enemies.remove(enemy)
+    
+    def draw_hitbox(self):
+        pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 2)
 
 player = Player('player', 200, 200, 3, 5)
 
@@ -333,6 +337,7 @@ while run:
             #update
             magic_group.update()
             player.hit_enemies(animated_enemies)
+            #player.draw_hitbox()
             Status().update(health, stamina)
 
             #draw
@@ -356,7 +361,7 @@ while run:
                     animated_enemies.remove(enemy)
             for enemy in animated_enemies:
                 enemy.draw()
-
+        
             if score > high_score:
                 high_score = score
                 with open('score.txt', 'w') as file:
