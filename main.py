@@ -32,8 +32,6 @@ GRAVITY = 0.75
 ROWS = 16
 COLS = 150
 TILE_SIZE = 700 // ROWS
-TILES_TYPE = 3
-level = 0
 #load images
 forestbg_img = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 def draw_bg():
@@ -138,6 +136,14 @@ class Player(pygame.sprite.Sprite):
         if self.vel_y > 10:
             self.vel_y 
         dy += self.vel_y   
+    
+    #check collision floor
+        if self.rect.bottom + dy > 600:
+            dy = 600 - self.rect.bottom
+            self.in_air = False
+        
+        self.rect.x += dx
+        self.rect.y += dy
     
     def update_animation(self):
         ANIMATION_COOLDOWN = 100
