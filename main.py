@@ -388,7 +388,7 @@ while run:
                 with open('score.txt', 'w') as file:
                     file.write(str(high_score))
             score_text = font.render(f"score: {score}", True, (255, 255, 255))
-            screen.blit(score_text, (1000, 10))
+            screen.blit(score_text, (1000, 30))
             if health == 0:
                 screen.fill((0, 0, 0))
                 dead_text = font.render("DEAD", True, (255, 0, 0))
