@@ -27,15 +27,21 @@ GRAVITY = 0.75
 ROWS = 16
 COLS = 150
 TILE_SIZE = 700 // ROWS
-TILES_TYPE = 2
+TILES_TYPE = 3
 level = 0
+bg_scroll = 0
 #load images
+forestbg_img = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
 #store tiles in a list
-#for x in range(TILES_TYPE):
-    #img = pygame.transform.scale(img, (TILE_SIZE), TILE_SIZE)
+img_list = []
+for x in range(TILES_TYPE):
+    img = pygame.image.load(f'tile/{x}.png')
+    img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
+    img_list.append(img)
 def draw_bg():
     screen.fill(BG)
-    pygame.draw.line(screen, RED, (0, 600), (1200, 600))
+    width = forestbg_img.get_width()
+    screen.blit(forestbg_img, ((x * width) - bg_scroll * 0.5, 0))
 
 #projectile ---skill---
 class magic_missle(pygame.sprite.Sprite):
@@ -108,6 +114,8 @@ class Player(pygame.sprite.Sprite):
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
         
     def move(self, moving_left, moving_right):
         dx = 0
@@ -134,12 +142,21 @@ class Player(pygame.sprite.Sprite):
         dy += self.vel_y
 
         #check collision floor
-        if self.rect.bottom + dy > 600:
-            dy = 600 - self.rect.bottom
-            self.in_air = False
-        
-        self.rect.x += dx
-        self.rect.y += dy
+        for tile in world.obstacle_list:
+                #check collision in the x direction
+                if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                    dx = 0
+                #check for collision in the y direction
+                if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                    #check if below the ground, i.e. jumping
+                    if self.vel_y < 0:
+                        self.vel_y = 0
+                        dy = tile[1].bottom - self.rect.top
+                    #check if above the ground, i.e. falling
+                    elif self.vel_y >= 0:
+                        self.vel_y = 0
+                        self.in_air = False
+                        dy = tile[1].top - self.rect.bottom
     
     def update_animation(self):
         ANIMATION_COOLDOWN = 100
@@ -166,18 +183,30 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.rect
 
-player = Player('player', 200, 200, 3, 5)
 
-#class world():
-    #def __init__(self):
-        #self.obstacle_list = []
+
+class World():
+    def __init__(self):
+        self.obstacle_list = []
     
-    #def process_dataa(self, data):
+    def process_data(self, data):
         #iterate through each value in level data file
-        #for y, row in enumerate(data):
-            #for x, tile in enumeratee(row):
-                #if tile >= 0:
-
+        for y, row in enumerate(data):
+            for x, tile in enumerate(row):
+                if tile >= 0:
+                    img = img_list[tile]
+                    img_rect = img.get_rect()
+                    img_rect.x = x * TILE_SIZE
+                    img_rect.y = y * TILE_SIZE
+                    tile_data = (img, img_rect)
+                    if tile >= 0 and tile <= 1:
+                        self.obstacle_list.append(tile_data)
+                    elif tile == 2:
+                        player = Player('player', x * TILE_SIZE, y * TILE_SIZE, 3, 5)
+        return player 
+    def draw(self):
+        for tile in self.obstacle_list:
+            screen.blit(tile[0], tile[1])
 
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -231,12 +260,15 @@ with open(f'level{level}_data.csv', newline='') as csvfile:
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
             world_data[x][y] = int(tile)
+world = World()
+player = world.process_data(world_data)
 
 
 
 while run:
     clock.tick(FPS)
     draw_bg()
+    world.draw()
     player.update_animation()
     player.draw()
     now = pygame.time.get_ticks()

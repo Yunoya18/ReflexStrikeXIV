@@ -21,7 +21,7 @@ pygame.display.set_caption(('Level Editor'))
 ROWS = 16
 MAX_COLS = 150
 TILE_SIZE = SCREEN_HEIGHT // ROWS
-TILE_TYPES = 2
+TILE_TYPES = 3
 level = 0
 current_tile = 0
 scroll_left = False
@@ -51,7 +51,7 @@ RED = (200, 25, 25)
 #define font
 font = pygame.font.SysFont('Futura', 30)
 
-#create emptty tile list
+#create empty tile list
 world_data = []
 for row in range(ROWS):
     r = [-1] * MAX_COLS
