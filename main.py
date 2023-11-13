@@ -254,9 +254,8 @@ while run:
             check_word = WORDS[random.randint(0, 10000)]
             text = ""
             print(check_word)
-
     if is_paused:
-        paused_text = font.render(":)", False, (255, 255, 255))
+        paused_text = font.render(":(", False, (255, 255, 255))
         screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
 
     else:
@@ -303,6 +302,6 @@ while run:
             enemy.draw_hitbox()
         score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (screen_width - 200, 10))
-        pygame.display.update()
+    pygame.display.update()
 
 pygame.quit()
