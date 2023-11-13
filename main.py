@@ -18,11 +18,6 @@ txt = response.read().decode()
 #score
 score = 0
 
-#load images
-#store tiles in a list
-img_list = []
-for x in range(TILE_TYPES):
-    img = pygame.image.load(f'img/TILE/{x}')
 
 WORDS = txt.splitlines()
 FPS = 60
@@ -34,6 +29,10 @@ COLS = 150
 TILE_SIZE = 700 // ROWS
 TILES_TYPE = 2
 level = 0
+#load images
+#store tiles in a list
+#for x in range(TILES_TYPE):
+    #img = pygame.transform.scale(img, (TILE_SIZE), TILE_SIZE)
 def draw_bg():
     screen.fill(BG)
     pygame.draw.line(screen, RED, (0, 600), (1200, 600))
@@ -169,15 +168,15 @@ class Player(pygame.sprite.Sprite):
 
 player = Player('player', 200, 200, 3, 5)
 
-class world():
-    def __init__(self):
-        self.obstacle_list = []
+#class world():
+    #def __init__(self):
+        #self.obstacle_list = []
     
-    def process_dataa(self, data):
+    #def process_dataa(self, data):
         #iterate through each value in level data file
-        for y, row in enumerate(data):
-            for x, tile in enumeratee(row):
-                if tile >= 0:
+        #for y, row in enumerate(data):
+            #for x, tile in enumeratee(row):
+                #if tile >= 0:
 
 
 class mana(pygame.sprite.Sprite):
