@@ -43,7 +43,7 @@ class AnimatedEnemy:
 
     def play_death_sound(self):
         channel = pygame.mixer.find_channel()
-        death_sound = pygame.mixer.Sound('sound/playdead.mp3')
+        death_sound = pygame.mixer.Sound('sound/punch.mp3')
         if channel:
             channel.set_volume(0.5)
             channel.play(death_sound)
