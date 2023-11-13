@@ -257,7 +257,8 @@ while run:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     skill = False
-                    stamina = 0
+                    create_mana = True
+                    current_mana = mana(mana_x, 0)
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
@@ -273,6 +274,7 @@ while run:
                     player.jump = True
                 if event.key == pygame.K_RETURN and stamina > 0 and is_paused == False:
                     skill = True
+                    create_mana = False
                     skill_start = pygame.time.get_ticks()
                     check_word = WORDS[random.randint(0, 10000)]
                 if event.key == pygame.K_p:
@@ -298,13 +300,14 @@ while run:
         now = pygame.time.get_ticks()
 
         if skill:
-            if now - skill_start > stamina * 3000: #มานาก้อนละ 3 วิ
+            if now - skill_start > 3000: #มานาก้อนละ 3 วิ
+                stamina -= 1
+                skill_start = pygame.time.get_ticks()
+            if stamina == 0:
                 skill = False
-                stamina = 0
                 text = ""
                 create_mana = True
                 current_mana = mana(mana_x, 0)
-                last = pygame.time.get_ticks()
             if text == check_word:
                 magic_group.add(player.create_magic_missle())
                 magic_missle.sfx()
@@ -352,7 +355,7 @@ while run:
                 screen.blit(checkword_surface, checkword_surface.get_rect(center=(600, 50)))
                 text_surface = font.render(text, True, (255, 255, 255))
                 screen.blit(text_surface, text_surface.get_rect(center=(600, 100)))
-            if stamina < 5 and create_mana:
+            if stamina < 5:
                 screen.blit(current_mana.image, current_mana.rect)
 
             #enemy
