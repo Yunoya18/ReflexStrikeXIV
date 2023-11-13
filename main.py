@@ -180,8 +180,8 @@ class Player(pygame.sprite.Sprite):
         # Check for collision with enemies
         global health
         for enemy in enemies:
-            if self.hitbox.colliderect(enemy.hitbox):
-                health -= 1
+            if self.rect.colliderect(enemy.rect):
+                health = max(0, health - 1)
                 enemies.remove(enemy)
     
     def draw_hitbox(self):
@@ -247,6 +247,8 @@ while run:
                 pygame.quit()
             if start_button.draw() == True:
                 start_game = True
+        highscore_text = font.render("Your highscore : " + str(high_score), True, (0, 0, 0))
+        screen.blit(highscore_text, highscore_text.get_rect(center=(600, 450)))
         if skill:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
@@ -324,9 +326,9 @@ while run:
                 last = pygame.time.get_ticks()
             now = pygame.time.get_ticks()
             if now - last >= 8000: #8 sec
-                    last = now
-                    mana_x = random.randrange(0, 1100)
-                    current_mana = mana(mana_x, 0)
+                last = now
+                mana_x = random.randrange(0, 1100)
+                current_mana = mana(mana_x, 0)
 
             #update
             magic_group.update()
@@ -355,7 +357,6 @@ while run:
                     animated_enemies.remove(enemy)
             for enemy in animated_enemies:
                 enemy.draw()
-                #enemy.draw_hitbox()
         
             if score > high_score:
                 high_score = score
