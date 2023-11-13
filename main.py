@@ -193,7 +193,7 @@ class Player(pygame.sprite.Sprite):
     def draw_hitbox(self):
         pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 2)
 
-player = Player('player', 200, 200, 3, 5)
+player = Player('player', 200, 600, 3, 5)
 
 class mana(pygame.sprite.Sprite):
     def __init__(self, x, y):
