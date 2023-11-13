@@ -6,12 +6,12 @@ screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 # button class
 class Button():
-    def __init__(self, x, y, image, scale):
+    def __init__(self, x, image, scale):
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect.center = (x, 350)
         self.clicked = False
 
     def draw(self):

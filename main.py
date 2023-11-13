@@ -95,18 +95,19 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
-        temp_list = []
-        for i in range(5):
-            img = pygame.image.load(f'image/{self.char_type}/MCMAIN/walk/{i}.png')
-            img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-            temp_list.append(img)
-        self.animation_list.append(temp_list)
-        temp_list = []
-        for i in range(5):
-            img = pygame.image.load(f'image/{self.char_type}/MCMAIN/cast/{i}.png')
-            img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-            temp_list.append(img)
-        self.animation_list.append(temp_list)
+        #load all images for the players
+        animation_types = ['walk', 'cast']
+        for animation in animation_types:
+            #reset temporary list of images
+            temp_list = []
+            #count number of files in the folder
+            num_of_frames = len(os.listdir(f'image/{self.char_type}/MCMAIN/{animation}'))
+            for i in range(num_of_frames):
+                img = pygame.image.load(f'image/{self.char_type}/MCMAIN/{animation}/{i}.png').convert_alpha()
+                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                temp_list.append(img)
+            self.animation_list.append(temp_list)
+
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -127,7 +128,7 @@ class Player(pygame.sprite.Sprite):
         
         #Jump
         if self.jump == True and self.in_air == False:
-            self.vel_y = -11
+            self.vel_y = -15
             self.jump = False
             self.in_air = True
 
@@ -152,7 +153,9 @@ class Player(pygame.sprite.Sprite):
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         if self.frame_index >= len(self.animation_list[self.action]):
-            self.frame_index = 0
+                self.frame_index = 0
+                if self.action == 1:
+                    self.action = 0
     
     def update_action(self, new_action):
         if new_action != self.action:
@@ -217,8 +220,8 @@ pygame.mixer.music.set_volume(0.7)
 # menu button
 start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
 exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
-start_button = button.Button(250, 300, start_img, 0.2)
-exit_button = button.Button(700, 300, exit_img, 0.2)
+start_button = button.Button(400, start_img, 0.2)
+exit_button = button.Button(800, exit_img, 0.2)
 start_game = False
 
 # enemy
@@ -290,11 +293,12 @@ while run:
                 magic_missle.sfx()
                 check_word = WORDS[random.randint(0, 10000)]
                 text = ""
+                player.update_action(1)
+                
 
         if moving_left or moving_right:
             player.update_action(0)
         player.move(moving_left, moving_right)
-
 
         if is_paused:
             screen.fill((0, 0, 0))
@@ -305,14 +309,13 @@ while run:
             screen.blit(resume_text, resume_text.get_rect(center=(600, 370)))
             screen.blit(restart_text, restart_text.get_rect(center=(600, 440)))
 
-
         else:
             current_mana.update()
             if current_mana.rect.collidepoint(player.rect.center):
-                    mana_x = random.randrange(0, 1100)
-                    current_mana = mana(mana_x, 0)
-                    stamina = min(5, stamina + 1)
-                    last = pygame.time.get_ticks()
+                mana_x = random.randrange(0, 1100)
+                current_mana = mana(mana_x, 0)
+                stamina = min(5, stamina + 1)
+                last = pygame.time.get_ticks()
             now = pygame.time.get_ticks()
             if now - last >= 8000: #8 sec
                     last = now
