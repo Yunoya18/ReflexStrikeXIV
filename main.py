@@ -97,7 +97,7 @@ class Player(pygame.sprite.Sprite):
         self.action = 0
         self.update_time = pygame.time.get_ticks()
         #load all images for the players
-        animation_types = ['walk', 'cast']
+        animation_types = ['walk', 'cast', 'mc_dead']
         for animation in animation_types:
             #reset temporary list of images
             temp_list = []
