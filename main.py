@@ -34,7 +34,7 @@ COLS = 150
 TILE_SIZE = 700 // ROWS
 #load images
 forestbg_img = pygame.image.load('AssetsBG/forestBG.png').convert_alpha()
-ground = pygame.image.load('AssetsBG/ground.png').convert_alpha()
+ground = pygame.image.load('tile/tile_long.png').convert_alpha()
 def draw_bg():
     screen.fill(BG)
     screen.blit(forestbg_img, (0, 0))
