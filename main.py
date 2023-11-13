@@ -67,6 +67,7 @@ class magic_missle(pygame.sprite.Sprite):
             
     def update(self):
         global score
+        global stamina
         self.rect.x += self.direction * self.speed
         if self.rect.x < -200 or self.rect.x > 1500:
             # destroy missle if travel to far
@@ -77,9 +78,10 @@ class magic_missle(pygame.sprite.Sprite):
                 animated_enemies.remove(enemy)
                 enemy.play_death_sound()
                 score += 1
+                stamina += 0.5
                 self.kill()
                 break
-        
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
@@ -347,7 +349,7 @@ while run:
             magic_group.update()
             player.hit_enemies(animated_enemies)
             #player.draw_hitbox()
-            Status().update(health, stamina)
+            Status().update(health, int(stamina))
 
             #draw
             magic_group.draw(screen)
