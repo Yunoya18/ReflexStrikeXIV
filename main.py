@@ -211,8 +211,8 @@ pygame.mixer.music.play(-1)
 # menu button
 start_img = pygame.transform.scale(pygame.image.load('manu/start.png').convert_alpha(), (1000, 1000))
 exit_img = pygame.transform.scale(pygame.image.load('manu/exit.png').convert_alpha(), (1000, 1000))
-start_button = button.Button(250, 300, start_img, 0.2)
-exit_button = button.Button(700, 300, exit_img, 0.2)
+start_button = button.Button(400, start_img, 0.2)
+exit_button = button.Button(800, exit_img, 0.2)
 start_game = False
 
 # enemy
@@ -253,6 +253,10 @@ while run:
                     check_word = WORDS[random.randint(0, 10000)]
                 if event.key == pygame.K_p:
                     is_paused = not is_paused
+                if event.key == pygame.K_r and is_paused:
+                    score = 0
+                    animated_enemies.clear()
+                    is_paused = False
             #keyboard released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -289,16 +293,20 @@ while run:
 
         if is_paused:
             screen.fill((0, 0, 0))
-            paused_text = font.render(":(", False, (255, 255, 255))
-            screen.blit(paused_text, (screen_width // 2 - 50, screen_height // 2 - 20))
+            paused_text = font.render("PAUSED", True, (255, 0, 0))
+            restart_text = font.render("press \'r\' to restart", True, (255, 255, 255))
+            resume_text = font.render("press \'p\' to resume", True, (255, 255, 255))
+            screen.blit(paused_text, paused_text.get_rect(center=(600, 300)))
+            screen.blit(resume_text, resume_text.get_rect(center=(600, 370)))
+            screen.blit(restart_text, restart_text.get_rect(center=(600, 440)))
 
         else:
             current_mana.update()
             if current_mana.rect.collidepoint(player.rect.center):
-                    mana_x = random.randrange(0, 1100)
-                    current_mana = mana(mana_x, 0)
-                    stamina = min(5, stamina + 1)
-                    last = pygame.time.get_ticks()
+                mana_x = random.randrange(0, 1100)
+                current_mana = mana(mana_x, 0)
+                stamina = min(5, stamina + 1)
+                last = pygame.time.get_ticks()
             now = pygame.time.get_ticks()
             if now - last >= 8000: #8 sec
                     last = now
